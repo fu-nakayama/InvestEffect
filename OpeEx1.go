@@ -52,10 +52,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 }
 
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	if function == "delete" {
-		// Deletes an entity from its state
-		return t.delete(stub, args), nil
-	} else if function == "issue" {
+	if function == "issue" {
 		// issue
 		if len(args) != 1 {
 			return nil, errors.New("Incorrect number of arguments. Expecting 1")
