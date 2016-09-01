@@ -22,21 +22,10 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	var BK, SC, TB, Total float64
 	var err error
 
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4")
-	}
-
 	BK = 0
 	SC = 0
 	TB = 0
 	Total = 0
-
-	// String to Float64
-	Total, err = strconv.ParseFloat(args[0], 64)
-	if err != nil {
-		return nil, errors.New("Expecting float value for Total")
-	}
-	fmt.Printf("Init: BK = %f, SC = %f, TB = %f, Total = %f\n", BK, SC, TB, Total)
 
 	// Write the state (byte in string) to the ledger
 	err = stub.PutState("BK", []byte(strconv.FormatFloat(BK, 'E', -1, 64)))
@@ -63,46 +52,85 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 }
 
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-//	if function == "distribute" {
-//		// distribute to entity
+	if function == "issue" {
+		// issue
+		if len(args) != 1 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 1")
+		}
+
+		// String to Float64
+		var Current, Amount	float64
+		var AmountStr		string
+		var err error
+
+		// String to Float64
+		Amount, err = strconv.ParseFloat(args[0], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for Amount to be issued")
+		}
+		fmt.Printf("Invoke (issue): Amount = %f\n", Amount)
+
+		AmountBytes, err := stub.GetState("Total")
+		if err != nil {
+			return nil, errors.New("Failed to get state")
+		}
+		// String to Float64
+		AmountStr = string(AmountBytes)
+		Current, err = strconv.ParseFloat(AmountStr, 64)
+		fmt.Printf("Invoke (issue): Current = %f, Issueing Amount = %f\n", Current, Amount)
+
+		Current = Current + Amount
+		err = stub.PutState("Total", []byte(strconv.FormatFloat(Current, 'E', -1, 64)))
+		if err != nil {
+			return nil, err
+		}
+		fmt.Printf("Invoke (issue): Current = %f\n", Current)
+
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+
+	} else if function == "distribute" {
+		// distribute to entity
 		if len(args) != 2 {
 			return nil, errors.New("Incorrect number of arguments. Expecting 2")
 		}
-//	}
-	
-	var Dest		string
-	var Current, Amount	float64
-	var AmountStr		string
-	var err error
-	
-	Dest = args[0]
-	// String to Float64
-	Amount, err = strconv.ParseFloat(args[1], 64)
-	if err != nil {
-		return nil, errors.New("Expecting float value for Amount to be moved")
-	}
-	fmt.Printf("Invoke: Dest = %s, Amount = %f\n", Dest, Amount)
 
-	AmountBytes, err := stub.GetState(Dest)
-	if err != nil {
-		return nil, errors.New("Failed to get state")
-	}
-	// String to Float64
-	AmountStr = string(AmountBytes)
-	Current, err = strconv.ParseFloat(AmountStr, 64)
-	fmt.Printf("Invoke: Dest = %s, Current = %f, Addiing Amount = %f\n", Dest, Current, Amount)
+		var Dest		string
+		var Current, Amount	float64
+		var AmountStr		string
+		var err error
 	
-	Current = Current + Amount
-	err = stub.PutState(Dest, []byte(strconv.FormatFloat(Current, 'E', -1, 64)))
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("Invoke: Dest = %s, Current = %f\n", Dest, Current)
+		Dest = args[0]
+		// String to Float64
+		Amount, err = strconv.ParseFloat(args[1], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for Amount to be moved")
+		}
+		fmt.Printf("Invoke (distribute): Dest = %s, Amount = %f\n", Dest, Amount)
 
-	if err != nil {
-		return nil, err
+		AmountBytes, err := stub.GetState(Dest)
+		if err != nil {
+			return nil, errors.New("Failed to get state")
+		}
+		// String to Float64
+		AmountStr = string(AmountBytes)
+		Current, err = strconv.ParseFloat(AmountStr, 64)
+		fmt.Printf("Invoke (distribute): Dest = %s, Current = %f, Adding Amount = %f\n", Dest, Current, Amount)
+	
+		Current = Current + Amount
+		err = stub.PutState(Dest, []byte(strconv.FormatFloat(Current, 'E', -1, 64)))
+		if err != nil {
+			return nil, err
+		}
+		fmt.Printf("Invoke (distribute): Dest = %s, Current = %f\n", Dest, Current)
+
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
-	return nil, nil
 }
 
 // Query callback representing the query of a chaincode
@@ -119,7 +147,6 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 	Entity := args[0]
 	var AmountStr	string
-	var Amount	float64
 
 	// Get the state from the ledger
 	AmountBytes, err := stub.GetState(Entity)
@@ -129,7 +156,6 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	}
 	// String to Float64
 	AmountStr = string(AmountBytes)
-	Amount, err = strconv.ParseFloat(AmountStr, 64)
 
 	fmt.Printf("Query Response:%s\n", AmountStr)
 	return AmountBytes, nil
