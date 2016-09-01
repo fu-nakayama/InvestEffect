@@ -49,7 +49,11 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	var err error
+	var BKamount, SCamount, TBamount float64
 
+	BKamount, err = stub.GetState("BK")
+	SCamount, err = stub.GetState("SC")
+	TBamount, err = stub.GetState("TB")
 	fmt.Printf("Invoke: BKamount = %f, SCamount = %f, TBamount = %f\n", BKamount, SCamount, TBamount)
 
 	return nil, nil
