@@ -19,27 +19,42 @@ type SimpleChaincode struct {
 }
 
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	var BKamount, SCamount, TBamount float64
+	var BK, SC, TB, Total float64
 	var err error
 
-	BKamount = 0
-	SCamount = 0
-	TBamount = 0
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 4")
+	}
 
-	fmt.Printf("Init: BKamount = %f, SCamount = %f, TBamount = %f\n", BKamount, SCamount, TBamount)
+	BK = 0
+	SC = 0
+	TB = 0
+	Total = 0
 
-	// Write the state to the ledger
-	err = stub.PutState("BK", []byte(strconv.FormatFloat(BKamount, 'E', -1, 64)))
+	// String to Float64
+	Total, err = strconv.ParseFloat(args[3], 64)
+	if err != nil {
+		return nil, errors.New("Expecting float value for Total")
+	}
+	fmt.Printf("Init: BK = %f, SC = %f, TB = %f, Total = %f\n", BK, SC, TB, Total)
+
+	// Write the state (byte in string) to the ledger
+	err = stub.PutState("BK", []byte(strconv.FormatFloat(BK, 'E', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
 
-	err = stub.PutState("SC", []byte(strconv.FormatFloat(SCamount, 'E', -1, 64)))
+	err = stub.PutState("SC", []byte(strconv.FormatFloat(SC, 'E', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
 
-	err = stub.PutState("TB", []byte(strconv.FormatFloat(TBamount, 'E', -1, 64)))
+	err = stub.PutState("TB", []byte(strconv.FormatFloat(TB, 'E', -1, 64)))
+	if err != nil {
+		return nil, err
+	}
+
+	err = stub.PutState("Total", []byte(strconv.FormatFloat(Total, 'E', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
@@ -48,19 +63,46 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 }
 
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+//	if function == "distribute" {
+//		// distribute to entity
+		if len(args) != 2 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 2")
+		}
+//	}
+	
+	var Dest		string
+	var Current, Amount	float64
+	var AmountStr		string
 	var err error
-//	var BKamount, SCamount, TBamount float64
-	var BKamountByte, SCamountByte, TBamountByte []byte
+	
+	Dest = args[0]
+	// String to Float64
+	Amount, err = strconv.ParseFloat(args[1], 64)
+	if err != nil {
+		return nil, errors.New("Expecting float value for Amount to be moved")
+	}
+	fmt.Printf("Invoke: Dest = %s, Amount = %f\n", Dest, Amount)
 
-	BKamountByte, err = stub.GetState("BK")
-	TBamountByte, err = stub.GetState("TB")
-	SCamountByte, err = stub.GetState("SC")
-	fmt.Printf("Invoke: BKamount = %s, SCamount = %s, TBamount = %s\n", string(BKamountByte), string(SCamountByte), string(TBamountByte))
+	AmountBytes, err := stub.GetState(Dest)
+	if err != nil {
+		return nil, errors.New("Failed to get state")
+	}
+	// String to Float64
+	AmountStr = string(AmountBytes)
+	Current, err = strconv.ParseFloat(AmountStr, 64)
+	fmt.Printf("Invoke: Dest = %s, Current = %f, Addiing Amount = %f\n", Dest, Current, Amount)
+	
+	Current = Current + Amount
+	err = stub.PutState(Dest, []byte(strconv.FormatFloat(Current, 'E', -1, 64)))
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Invoke: Dest = %s, Current = %f\n", Dest, Current)
 
 	if err != nil {
 		return nil, err
 	}
-	return BKamountByte, nil
+	return nil, nil
 }
 
 // Query callback representing the query of a chaincode
@@ -72,26 +114,25 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	var err error
 
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting name of the person to query")
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the entity to query")
 	}
 
 	Entity := args[0]
+	var AmountStr	string
+	var Amount	float64
 
 	// Get the state from the ledger
-	Statebytes, err := stub.GetState(Entity)
+	AmountBytes, err := stub.GetState(Entity)
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get state for " + Entity + "\"}"
 		return nil, errors.New(jsonResp)
 	}
+	// String to Float64
+	AmountStr = string(AmountBytes)
+	Amount, err = strconv.ParseFloat(AmountStr, 64)
 
-	if Statebytes == nil {
-		jsonResp := "{\"Error\":\"Nil amount for " + Entity + "\"}"
-		return nil, errors.New(jsonResp)
-	}
-
-	jsonResp := "{\"Entity\":\"" + Entity + "\",\"Amount\":\"" + string(Statebytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
-	return Statebytes, nil
+	fmt.Printf("Query Response:%s\n", AmountStr)
+	return AmountBytes, nil
 }
 
 func main() {
