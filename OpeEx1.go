@@ -32,7 +32,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	Total = 0
 
 	// String to Float64
-	Total, err = strconv.ParseFloat(args[3], 64)
+	Total, err = strconv.ParseFloat(args[0], 64)
 	if err != nil {
 		return nil, errors.New("Expecting float value for Total")
 	}
