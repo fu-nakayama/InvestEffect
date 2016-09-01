@@ -29,20 +29,17 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStubInterface, function strin
 	fmt.Printf("Init: BKamount = %f, SCamount = %f, TBamount = %f\n", BKamount, SCamount, TBamount)
 
 	// Write the state to the ledger
-	val, err := strconv.FormatFloat(BKamount, 'E', -1, 64)
-	err = stub.PutState("BK", []byte(val))
+	err = stub.PutState("BK", []byte(strconv.FormatFloat(BKamount, 'E', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
 
-	val, err = strconv.FormatFloat(SCamount, 'E', -1, 64)
-	err = stub.PutState("SC", []byte(val))
+	err = stub.PutState("SC", []byte(strconv.FormatFloat(SCamount, 'E', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
 
-	val, err = strconv.FormatFloat(TBamount, 'E', -1, 64)
-	err = stub.PutState("TB", []byte(val))
+	err = stub.PutState("TB", []byte(strconv.FormatFloat(TBamount, 'E', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
