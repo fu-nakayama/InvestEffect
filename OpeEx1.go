@@ -72,7 +72,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
-	Entity = args[0]
+	Entity := args[0]
 
 	// Get the state from the ledger
 	Statebytes, err := stub.GetState(Entity)
