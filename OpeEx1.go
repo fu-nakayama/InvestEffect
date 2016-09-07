@@ -5,21 +5,27 @@ import (
 	"fmt"
 	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-
-//	"time"
-//	"math"
-//	"strings"
-//	"encoding/json"
-//	"sort"
-
+	"strings"
+	"encoding/json"
 )
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
 
-func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+type Project struct {
+	ProjectId	string	`json:"project_id"`
+	ProjectName	string	`json:"project_name"`
+	BKamount	float64	`json:"bk_amount"`
+	SCamount	float64	`json:"sc_amount"`
+	TBamount	float64	`json:"tb_amount"`
+	FGamount	float64	`json:"fg_amount"`
+}
+
+func (t *SimpleChaincode)
+Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	var BK, SC, TB, FG float64
+	var project Project
 	var err error
 
 	BK = 0
@@ -51,7 +57,8 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	return nil, nil
 }
 
-func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode)
+Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	if function == "issue" {
 		// issue
 		if len(args) != 1 {
@@ -185,7 +192,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 }
 
 // Query callback representing the query of a chaincode
-func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode)
+Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	if function != "query" {
 		return nil, errors.New("Invalid query function name. Expecting \"query\"")
 	}
