@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"strings"
-	"encoding/json"
+//	"encoding/json"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -48,7 +47,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, err
 	}
 
-	err = stub.PutState("FG", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
+	err = stub.PutState("FG", []byte(strconv.FormatFloat(FG, 'f', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
