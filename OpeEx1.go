@@ -150,6 +150,35 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, err
 		}
 		return nil, nil
+	} else if function == "init" {
+		var BK, SC, TB, Total float64
+		var err error
+
+		BK = 0
+		SC = 0
+		TB = 0
+		Total = 0
+
+		// Write the state (byte in string) to the ledger
+		err = stub.PutState("BK", []byte(strconv.FormatFloat(BK, 'f', -1, 64)))
+		if err != nil {
+			return nil, err
+		}
+
+		err = stub.PutState("SC", []byte(strconv.FormatFloat(SC, 'f', -1, 64)))
+		if err != nil {
+			return nil, err
+		}
+
+		err = stub.PutState("TB", []byte(strconv.FormatFloat(TB, 'f', -1, 64)))
+		if err != nil {
+			return nil, err
+		}
+
+		err = stub.PutState("Total", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
+		if err != nil {
+			return nil, err
+		}
 	}
 	return nil, errors.New("Function of that name doesn't exist.")
 }
