@@ -179,6 +179,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, err
 		}
+		return nil, nil
 	}
 	return nil, errors.New("Function of that name doesn't exist.")
 }
