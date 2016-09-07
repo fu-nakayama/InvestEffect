@@ -179,7 +179,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, err
 		}
 
-		err = stub.PutState("FG", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
+		err = stub.PutState("FG", []byte(strconv.FormatFloat(FG, 'f', -1, 64)))
 		if err != nil {
 			return nil, err
 		}
