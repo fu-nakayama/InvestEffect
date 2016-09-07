@@ -19,13 +19,13 @@ type SimpleChaincode struct {
 }
 
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	var BK, SC, TB, Total float64
+	var BK, SC, TB, FG float64
 	var err error
 
 	BK = 0
 	SC = 0
 	TB = 0
-	Total = 0
+	FG = 0
 
 	// Write the state (byte in string) to the ledger
 	err = stub.PutState("BK", []byte(strconv.FormatFloat(BK, 'f', -1, 64)))
@@ -43,7 +43,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, err
 	}
 
-	err = stub.PutState("Total", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
+	err = stub.PutState("FG", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
 	if err != nil {
 		return nil, err
 	}
@@ -70,9 +70,9 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		fmt.Printf("Invoke (issue): Amount = %f\n", Amount)
 
-		AmountBytes, err := stub.GetState("Total")
+		AmountBytes, err := stub.GetState("FG")
 		if err != nil {
-			return nil, errors.New("Failed to get state")
+			return nil, errors.New("Failed to get state for FG")
 		}
 		// String to Float64
 		AmountStr = string(AmountBytes)
@@ -80,7 +80,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (issue): Current = %f, Issueing Amount = %f\n", Current, Amount)
 
 		Current = Current + Amount
-		err = stub.PutState("Total", []byte(strconv.FormatFloat(Current, 'f', -1, 64)))
+		err = stub.PutState("FG", []byte(strconv.FormatFloat(Current, 'f', -1, 64)))
 		if err != nil {
 			return nil, err
 		}
@@ -129,35 +129,35 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (distribute): Dest = %s, Current = %f\n", Dest, Current)
 
 		// Get total amount
-		AmountBytes, err = stub.GetState("Total")
+		AmountBytes, err = stub.GetState("FG")
 		if err != nil {
-			return nil, errors.New("Failed to get state for Total")
+			return nil, errors.New("Failed to get state for FG")
 		}
 		// String to Float64
 		AmountStr = string(AmountBytes)
 		Current, err = strconv.ParseFloat(AmountStr, 64)
-		fmt.Printf("Invoke (distribute): Dest = Total, Current = %f, Adding Amount = %f\n", Current, Amount)
+		fmt.Printf("Invoke (distribute): Dest = FG, Current = %f, Adding Amount = %f\n", Current, Amount)
 
 		// update target amount	
 		Current = Current - Amount
-		err = stub.PutState("Total", []byte(strconv.FormatFloat(Current, 'f', -1, 64)))
+		err = stub.PutState("FG", []byte(strconv.FormatFloat(Current, 'f', -1, 64)))
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("Invoke (distribute): Dest = Total, Current = %f\n", Current)
+		fmt.Printf("Invoke (distribute): Dest = FG, Current = %f\n", Current)
 
 		if err != nil {
 			return nil, err
 		}
 		return nil, nil
 	} else if function == "init" {
-		var BK, SC, TB, Total float64
+		var BK, SC, TB, FG float64
 		var err error
 
 		BK = 0
 		SC = 0
 		TB = 0
-		Total = 0
+		FG = 0
 
 		// Write the state (byte in string) to the ledger
 		err = stub.PutState("BK", []byte(strconv.FormatFloat(BK, 'f', -1, 64)))
@@ -175,7 +175,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, err
 		}
 
-		err = stub.PutState("Total", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
+		err = stub.PutState("FG", []byte(strconv.FormatFloat(Total, 'f', -1, 64)))
 		if err != nil {
 			return nil, err
 		}
