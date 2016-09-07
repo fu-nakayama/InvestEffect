@@ -14,7 +14,6 @@ type SimpleChaincode struct {
 
 type Project struct {
 	ProjectId	string	`json:"project_id"`
-	ProjectName	string	`json:"project_name"`
 	BKamount	float64	`json:"bk_amount"`
 	SCamount	float64	`json:"sc_amount"`
 	TBamount	float64	`json:"tb_amount"`
@@ -57,8 +56,8 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	if function == "issue" {
 		// issue
-		if len(args) != 1 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 1")
+		if len(args) != 2 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 2 (Project ID, Amount)")
 		}
 
 		// String to Float64
@@ -67,8 +66,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		var project Project
 		var err error
 
+		project.ProjectId = args[0]
+
 		// String to Float64
-		Amount, err = strconv.ParseFloat(args[0], 64)
+		Amount, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for Amount to be issued")
 		}
@@ -93,6 +94,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, err
 		}
 		fmt.Printf("Invoke (issue): Current = %f\n", Current)
+
+		err = stub.PutState(project.ProjectId, []byte(project))
+		if err != nil {
+			return nil, err
+		}
+		fmt.Printf("Invoke (issue): Project = %s\n", project.ProjectId)
 
 		if err != nil {
 			return nil, err
