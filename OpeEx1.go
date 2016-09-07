@@ -22,8 +22,7 @@ type Project struct {
 	FGamount	float64	`json:"fg_amount"`
 }
 
-func (t *SimpleChaincode)
-Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	var BK, SC, TB, FG float64
 	var project Project
 	var err error
@@ -57,8 +56,7 @@ Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	return nil, nil
 }
 
-func (t *SimpleChaincode)
-Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	if function == "issue" {
 		// issue
 		if len(args) != 1 {
@@ -192,8 +190,7 @@ Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error)
 }
 
 // Query callback representing the query of a chaincode
-func (t *SimpleChaincode)
-Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	if function != "query" {
 		return nil, errors.New("Invalid query function name. Expecting \"query\"")
 	}
