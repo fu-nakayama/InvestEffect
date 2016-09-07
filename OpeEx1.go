@@ -23,7 +23,6 @@ type Project struct {
 
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	var BK, SC, TB, FG float64
-	var project Project
 	var err error
 
 	BK = 0
@@ -65,6 +64,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// String to Float64
 		var Current, Amount	float64
 		var AmountStr		string
+		var project Project
 		var err error
 
 		// String to Float64
@@ -74,6 +74,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		fmt.Printf("Invoke (issue): Amount = %f\n", Amount)
 
+		project.FGamount = Amount
+		project.BKamount = 0
+		project.SCamount = 0
+		project.TBamount = 0
 		AmountBytes, err := stub.GetState("FG")
 		if err != nil {
 			return nil, errors.New("Failed to get state for FG")
