@@ -21,36 +21,19 @@ type Project struct {
 }
 
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	var BK, SC, TB, FG float64
-	var err error
-
-	BK = 0
-	SC = 0
-	TB = 0
-	FG = 0
-
-	// Write the state (byte in string) to the ledger
-	err = stub.PutState("BK", []byte(strconv.FormatFloat(BK, 'f', -1, 64)))
-	if err != nil {
-		return nil, err
+	record = InvestEffectRecord{
+		ProjectId:	req.RequestId ,
+		BKamount:	req.LenderId ,
+		SCamount:	req.LendeeId ,
+		TBamount:	req.LatestHistoryId ,
+		FGamount:	hist.TimeStamp,
 	}
 
-	err = stub.PutState("SC", []byte(strconv.FormatFloat(SC, 'f', -1, 64)))
+	bytes, err := json.Marshal(record)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Error creating InvestEffectRecord record")
 	}
-
-	err = stub.PutState("TB", []byte(strconv.FormatFloat(TB, 'f', -1, 64)))
-	if err != nil {
-		return nil, err
-	}
-
-	err = stub.PutState("FG", []byte(strconv.FormatFloat(FG, 'f', -1, 64)))
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
+	return []byte(bytes), nil
 }
 
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
