@@ -71,6 +71,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (issue): fg_amount = %f\n", fg_amount)
 
 		// making a record
+		var project_record Project
 		project_record = Project {
 			ProjectId:	args[0],
 			BKamount:	bk_amount,
