@@ -57,6 +57,7 @@ type Project struct {
 	SCamount	float64	`json:"sc_amount"`
 	TBamount	float64	`json:"tb_amount"`
 	FGamount	float64	`json:"fg_amount"`
+	// more
 }
 
 //
