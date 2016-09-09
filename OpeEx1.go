@@ -77,7 +77,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			BKamount:	bk_amount,
 			SCamount:	sc_amount,
 			TBamount:	tb_amount,
-			FGamount:	fg_amount
+			FGamount:	fg_amount,
 		}
 
 		if err != nil {
