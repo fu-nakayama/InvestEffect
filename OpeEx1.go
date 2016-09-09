@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-//	"encoding/json"
+	"encoding/json"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -97,7 +97,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("query is running " + function)
 
-	if function = "get_invest_summary" {
+	if function == "get_invest_summary" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
 			return nil, errors.New("Query: Incorrect number of arguments passed")
