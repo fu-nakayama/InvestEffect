@@ -43,7 +43,6 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// String to Float64
 		var bk_amount, sc_amount, tb_amount, fg_amount	float64
 		var project_id									string
-		var project_record								Project
 		var err											error
 
 		// Set Arguments to local variables
@@ -80,9 +79,16 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			FGamount:	fg_amount,
 		}
 
+		bytes, err := json.Marshal(project_record)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("Error creating new record")
 		}
+
+		err = stub.PutState( reqKey, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("Unable to put the state")
+		}
+
 		return nil, nil
 	}
 
