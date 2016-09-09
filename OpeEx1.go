@@ -127,10 +127,10 @@ func (t *SimpleChaincode) get_invest_summary(stub *shim.ChaincodeStub, project_i
 
 	if err = json.Unmarshal(project_summary_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_summary_asbytes))}
 	fmt.Printf("Invoke (issue): project_id = %f\n", project_id)
-	fmt.Printf("Invoke (issue): bk_amount = %f\n", bk_amount)
-	fmt.Printf("Invoke (issue): sc_amount = %f\n", sc_amount)
-	fmt.Printf("Invoke (issue): tb_amount = %f\n", tb_amount)
-	fmt.Printf("Invoke (issue): fg_amount = %f\n", fg_amount)
+	fmt.Printf("Invoke (issue): bk_amount = %f\n", project_record.bk_amount)
+	fmt.Printf("Invoke (issue): sc_amount = %f\n", project_record.sc_amount)
+	fmt.Printf("Invoke (issue): tb_amount = %f\n", project_record.tb_amount)
+	fmt.Printf("Invoke (issue): fg_amount = %f\n", project_record.fg_amount)
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
