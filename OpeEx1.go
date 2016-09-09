@@ -25,7 +25,7 @@ type Project struct {
 //
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	// Nothing to do here, just return
-	return nill, nil
+	return nil, nil
 }
 
 //
