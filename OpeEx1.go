@@ -49,19 +49,19 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// Set Arguments to local variables
 		project_id = args[0]
 
-		bk_mount, err = strconv.ParseFloat(args[1], 64)
+		bk_amount, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for bk_amount to be issued")
 		}
-		sc_mount, err = strconv.ParseFloat(args[2], 64)
+		sc_amount, err = strconv.ParseFloat(args[2], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for sc_amount to be issued")
 		}
-		tb_mount, err = strconv.ParseFloat(args[3], 64)
+		tb_amount, err = strconv.ParseFloat(args[3], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for tb_amount to be issued")
 		}
-		fg_mount, err = strconv.ParseFloat(args[4], 64)
+		fg_amount, err = strconv.ParseFloat(args[4], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for fg_amount to be issued")
 		}
