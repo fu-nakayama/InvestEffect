@@ -85,7 +85,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, errors.New("Error creating new record")
 		}
 
-		err = stub.PutState( reqKey, []byte(bytes))
+		err = stub.PutState(project_id, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("Unable to put the state")
 		}
