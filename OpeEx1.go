@@ -12,6 +12,45 @@ import (
 type SimpleChaincode struct {
 }
 
+// Current amount
+type Amount struct {
+	Entity		string	`json:"entity"`		// "FG" | BK" | "SC" | "TB"
+	Amount		float64	`json:"amount"`
+}
+
+// Record of issue
+type Issue struct {
+	ProjectId	string	`json:"project_id"`	// {project_id} + "issue"
+	Currency	string	`json:"currency"`	// "JPY"
+	MinAmount	float64	`json:"min_amount"`
+	IssueAmount	float64	`json:"issue_amount"`
+	Issuer		string	`json:"issuer"`		// "FG"
+	IssueYear	uint16	`json:"issue_year"`	// Fiscal Year
+	Confirmed	bool	`json:"confirmed"`	// Yes: true, No: false
+}
+
+// Record of distribution
+type Distribution struct {
+	ProjectId	string	`json:"project_id"`	// {project_id} + "issue"
+	Currency	string	`json:"currency"`	// "JPY"
+	MinAmount	float64	`json:"min_amount"`	// "0.01"
+	IssueAmount	float64	`json:"issue_amount"`
+	Issuer		float64	`json:"issuer"`
+	IssueYear	uint16	`json:"issue_year"`
+	BKDept		string	`json:"bk_dept"`
+	BKTeam		string	`json:"bk_team"`
+	BKPerson	string	`json:"bk_person"`
+	BKConfirmed	bool	`json:"bk_confirmed"`	// Yes: true, No: false	
+	SCDept		string	`json:"sc_dept"`
+	SCTeam		string	`json:"sc_team"`
+	SCPerson	string	`json:"sc_person"`
+	SCConfirmed	bool	`json:"sc_confirmed"`	// Yes: true, No: false	
+	TBDept		string	`json:"tb_dept"`
+	TBTeam		string	`json:"tb_team"`
+	TBPerson	string	`json:"tb_person"`
+	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false	
+}
+
 type Project struct {
 	ProjectId	string	`json:"project_id"`
 	BKamount	float64	`json:"bk_amount"`
@@ -24,6 +63,61 @@ type Project struct {
 // Init
 //
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+	var amount_record Amount
+
+	// making a record
+	amount_record = Amount {
+		Entity:	"FG",
+		Amount:	0,
+	}
+	bytes, err := json.Marshal(amount_record)
+	if err != nil {
+		return nil, errors.New("Error creating new record")
+	}
+	err = stub.PutState(project_id, []byte(bytes))
+	if err != nil {
+		return nil, errors.New("Unable to put the state")
+	}
+
+	amount_record = Amount {
+		Entity:	"BK",
+		Amount:	0,
+	}
+	bytes, err := json.Marshal(amount_record)
+	if err != nil {
+		return nil, errors.New("Error creating new record")
+	}
+	err = stub.PutState(project_id, []byte(bytes))
+	if err != nil {
+		return nil, errors.New("Unable to put the state")
+	}
+
+	amount_record = Amount {
+		Entity:	"SC",
+		Amount:	0,
+	}
+	bytes, err := json.Marshal(amount_record)
+	if err != nil {
+		return nil, errors.New("Error creating new record")
+	}
+	err = stub.PutState(project_id, []byte(bytes))
+	if err != nil {
+		return nil, errors.New("Unable to put the state")
+	}
+
+	amount_record = Amount {
+		Entity:	"TB",
+		Amount:	0,
+	}
+	bytes, err := json.Marshal(amount_record)
+	if err != nil {
+		return nil, errors.New("Error creating new record")
+	}
+	err = stub.PutState(project_id, []byte(bytes))
+	if err != nil {
+		return nil, errors.New("Unable to put the state")
+	}
+
 	// Nothing to do here, just return
 	return nil, nil
 }
