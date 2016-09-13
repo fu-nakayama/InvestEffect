@@ -201,7 +201,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			ProjectId:	project_id,
 			Currency:	"JPY",
 			MinAmount:	0,
-			IssueAmount:	???,
+			IssueAmount:	issue_amount,
 			Issuer:		"FG",
 			IssueYear:	year,
 		}
