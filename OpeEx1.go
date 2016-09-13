@@ -339,7 +339,9 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
 		}
-		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_asbytes))}
+		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
+			return nil, errors.New("Error unmarshalling data "+string(project_asbytes))
+		}
 
 		if args[1] == "BK" {
 			project_record.BKConfirmed = true
@@ -349,6 +351,11 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			project_record.TBConfirmed = true
 		} else {
 			return nil, errors.New("Expecting entity name to be confirmed")
+		}
+		if project_record.BKConfirmed == true && 
+		   project_record.SCConfirmed == true &&
+		   project_record.TBConfirmed == true {
+		   	project_record.Confirmed == true
 		}
 
 		bytes, err := json.Marshal(project_record)
@@ -383,7 +390,15 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 		project_id := args[0]
 		return t.get_project(stub, project_id)
-	}
+	} else if function == "get_project" {
+		if len(get_receivable) != 1 {
+			fmt.Printf("Incorrect number of arguments passed");
+			return nil, errors.New("Query: Incorrect number of arguments passed")
+		}
+
+		project_id := args[0]
+		return t.get_project(stub, project_id)
+	}	
 
 	// Error
 	fmt.Println("Query did not find function: " + function)
@@ -404,15 +419,60 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
 	}
 
-	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_asbytes))}
-	fmt.Printf("Query (get_project): project_id = %s\n", project_id)
-	fmt.Printf("Query (get_project): project_name = %s\n", project_record.ProjectName)
-	fmt.Printf("Query (get_project): bk_amount = %f\n", project_record.BKamount)
-	fmt.Printf("Query (get_project): sc_amount = %f\n", project_record.SCamount)
-	fmt.Printf("Query (get_project): tb_amount = %f\n", project_record.TBamount)
-	fmt.Printf("Query (get_project): invest_amount = %f\n", project_record.InvestAmount)
+	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
+		return nil, errors.New("Error unmarshalling data "+string(project_asbytes))
+	}
+	fmt.Printf("Query (get_project): project_id = %s\n",	project_id)
+	fmt.Printf("Query (get_project): curency = %s\n",	project_record.Curerncy)
+	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
+	fmt.Printf("Query (get_project): amc__amount = %f\n",	project_record.AMCAmount)
+	fmt.Printf("Query (get_project): gcc_percent = %f\n",	project_record.AMCPercent)
+	fmt.Printf("Query (get_project): gcc__amount = %f\n",	project_record.AMCAmount)
+	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
+	fmt.Printf("Query (get_project): amc__amount = %f\n",	project_record.AMCAmount)
+	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
+	fmt.Printf("Query (get_project): amc__amount = %f\n",	project_record.AMCAmount)
+	fmt.Printf("Query (get_project): tb_amount = %f\n",	project_record.TBamount)
+	fmt.Printf("Query (get_project): invest_amount = %f\n",	project_record.InvestAmount)
 
 	bytes, err := json.Marshal(project_record)
+	if err != nil {
+		return nil, errors.New("Error creating returning record")
+	}
+	return []byte(bytes), nil
+}
+
+//
+// get_receivable
+//
+func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	var err			error
+	var receivable_record	Receivable
+
+	// Get the state from the ledger
+	receivable_key := project_id + "receivable"
+	receivable_asbytes, err := stub.GetState(receivable_key)
+	if err != nil {
+		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+	}
+
+	if err = json.Unmarshal(receivable_asbytes, &receivable_record) ; err != nil {
+		return nil, errors.New("Error unmarshalling data "+string(receivable_asbytes))
+	}
+	fmt.Printf("Query (get_receivable): project_id = %s\n",		project_id)
+	fmt.Printf("Query (get_receivable): currency = %s\n",		project_record.Currency)
+	fmt.Printf("Query (get_receivable): amc_percent = %f\n",	project_record.AMCPercent)
+	fmt.Printf("Query (get_receivable): amc_amount = %f\n",		project_record.AMCAmount)
+	fmt.Printf("Query (get_receivable): gcc_percent = %f\n",	project_record.GCCPercent)
+	fmt.Printf("Query (get_receivable): gcc_amount = %f\n",		project_record.GCCCamount)
+	fmt.Printf("Query (get_receivable): gmc_percent = %f\n",	project_record.GMCPercent)
+	fmt.Printf("Query (get_receivable): gmc_amount = %f\n",		project_record.GMCAmount)
+	fmt.Printf("Query (get_receivable): rbbc_percent = %f\n",	project_record.RBBCPercent)
+	fmt.Printf("Query (get_receivable): rbbc_amount = %f\n",	project_record.RBBCAmount)
+	fmt.Printf("Query (get_receivable): cic_percent = %f\n",	project_record.CICPercent)
+	fmt.Printf("Query (get_receivable): cic_amount = %f\n",		project_record.CICAmount)
+
+	bytes, err := json.Marshal(receivable_record)
 	if err != nil {
 		return nil, errors.New("Error creating returning record")
 	}
