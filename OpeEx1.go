@@ -189,9 +189,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		t := time.Now()
 
 		// making a Issue record
-		var year, month int
+		var year	uint16
+		var month 	uint8
 		year = t.Year()
-		month = int(t.Month())
+		month = t.Month()
 		if month < 4 {
 			year = year + 1
 		}
