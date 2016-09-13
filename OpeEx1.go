@@ -406,11 +406,11 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 
 	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_asbytes))}
 	fmt.Printf("Query (get_project): project_id = %s\n", project_id)
-	fmt.Printf("Query (get_project): project_name = %s\n", project_record.project_name)
+	fmt.Printf("Query (get_project): project_name = %s\n", project_record.ProjectName)
 	fmt.Printf("Query (get_project): bk_amount = %f\n", project_record.BKamount)
 	fmt.Printf("Query (get_project): sc_amount = %f\n", project_record.SCamount)
 	fmt.Printf("Query (get_project): tb_amount = %f\n", project_record.TBamount)
-	fmt.Printf("Query (get_project): invest_amount = %f\n", project_record.invest_amount)
+	fmt.Printf("Query (get_project): invest_amount = %f\n", project_record.InvestAmount)
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
