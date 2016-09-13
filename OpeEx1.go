@@ -92,7 +92,8 @@ type Project struct {
 	TBTeam		string	`json:"tb_team"`
 	TBPerson	string	`json:"tb_person"`
 	TBamount	float64	`json:"tb_amount"`
-	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false	}
+	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false
+}
 
 //
 // Init
