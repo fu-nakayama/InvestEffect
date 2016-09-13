@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"encoding/json"
 )
@@ -26,7 +27,6 @@ type Issue struct {
 	IssueAmount	float64	`json:"issue_amount"`
 	Issuer		string	`json:"issuer"`		// "FG"
 	IssueYear	uint16	`json:"issue_year"`	// Fiscal Year
-	Confirmed	bool	`json:"confirmed"`	// Yes: true, No: false
 }
 
 // Record of distribution
@@ -35,30 +35,64 @@ type Distribution struct {
 	Currency	string	`json:"currency"`	// "JPY"
 	MinAmount	float64	`json:"min_amount"`	// "0.01"
 	IssueAmount	float64	`json:"issue_amount"`
-	Issuer		float64	`json:"issuer"`
-	IssueYear	uint16	`json:"issue_year"`
+	Issuer		float64	`json:"issuer"`		// "FG"
+	IssueYear	uint16	`json:"issue_year"`	// Fiscal Year
 	BKDept		string	`json:"bk_dept"`
 	BKTeam		string	`json:"bk_team"`
 	BKPerson	string	`json:"bk_person"`
+	BKamount	float64	`json:"bk_amount"`
+	SCDept		string	`json:"sc_dept"`
+	SCTeam		string	`json:"sc_team"`
+	SCPerson	string	`json:"sc_person"`
+	SCamount	float64	`json:"sc_amount"`
+	TBDept		string	`json:"tb_dept"`
+	TBTeam		string	`json:"tb_team"`
+	TBPerson	string	`json:"tb_person"`
+	TBamount	float64	`json:"tb_amount"`
+}
+
+// Record of receivable
+type Receivable struct {
+	ProjectId	string	`json:"project_id"`	// {project_id} + "receivable"
+	Currency	string	`json:"currency"`	// "JPY"
+	AMCPercent	float64	`json:"amc_percent"`
+	AMCAmount	float64	`json:"amc_amount"`
+	GCCPercent	float64	`json:"gcc_percent"`
+	GCCAmount	float64	`json:"gcc_amount"`
+	GMCPercent	float64	`json:"gmc_percent"`
+	GMCAmount	float64	`json:"gmc_amount"`
+	RBBCPercent	float64	`json:"rbbc_percent"`
+	RBBCAmount	float64	`json:"rbbc_amount"`
+	CICPercent	float64	`json:"cic_percent"`
+	CICAmount	float64	`json:"cic_amount"`
+}
+
+type Project struct {
+	ProjectId	string	`json:"project_id"`	// {project_id} + "project"
+	ProjectName	string	`json:"project_name"`
+	InvestType	string	`json:"invest_type"`
+	InvestAmount	float64	`json:"invest_amount"`
+	Confirmed	bool	`json:"confirmed"`	// Yes: true, No: false	
+	AMCPercent	float64	`json:"amc_percent"`
+	GCCPercent	float64	`json:"gcc_percent"`
+	GMCPercent	float64	`json:"gmc_percent"`
+	RBBCPercent	float64	`json:"rbbc_percent"`
+	CICPercent	float64	`json:"cic_percent"`
+	BKDept		string	`json:"bk_dept"`
+	BKTeam		string	`json:"bk_team"`
+	BKPerson	string	`json:"bk_person"`
+	BKamount	float64	`json:"bk_amount"`
 	BKConfirmed	bool	`json:"bk_confirmed"`	// Yes: true, No: false	
 	SCDept		string	`json:"sc_dept"`
 	SCTeam		string	`json:"sc_team"`
 	SCPerson	string	`json:"sc_person"`
+	SCamount	float64	`json:"sc_amount"`
 	SCConfirmed	bool	`json:"sc_confirmed"`	// Yes: true, No: false	
 	TBDept		string	`json:"tb_dept"`
 	TBTeam		string	`json:"tb_team"`
 	TBPerson	string	`json:"tb_person"`
-	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false	
-}
-
-type Project struct {
-	ProjectId	string	`json:"project_id"`
-	BKamount	float64	`json:"bk_amount"`
-	SCamount	float64	`json:"sc_amount"`
 	TBamount	float64	`json:"tb_amount"`
-	FGamount	float64	`json:"fg_amount"`
-	// more
-}
+	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false	}
 
 //
 // Init
@@ -75,7 +109,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
-	err = stub.PutState(project_id, []byte(bytes))
+	err = stub.PutState("FG", []byte(bytes))
 	if err != nil {
 		return nil, errors.New("Unable to put the state")
 	}
@@ -88,7 +122,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
-	err = stub.PutState(project_id, []byte(bytes))
+	err = stub.PutState("BK", []byte(bytes))
 	if err != nil {
 		return nil, errors.New("Unable to put the state")
 	}
@@ -101,7 +135,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
-	err = stub.PutState(project_id, []byte(bytes))
+	err = stub.PutState("SC", []byte(bytes))
 	if err != nil {
 		return nil, errors.New("Unable to put the state")
 	}
@@ -114,7 +148,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
-	err = stub.PutState(project_id, []byte(bytes))
+	err = stub.PutState("TB", []byte(bytes))
 	if err != nil {
 		return nil, errors.New("Unable to put the state")
 	}
@@ -129,60 +163,200 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
 
-	if function == "issue" {
-		// issue (ProjectId, BKamount, SCamount, TBamount, FGamount)
-		if len(args) != 5 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 5")
+	if function == "issue" {			// issue //
+		// issue (ProjectId, Issueamount)
+		if len(args) != 2 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 2 arguments for issue.")
 		}
 
 		// String to Float64
-		var bk_amount, sc_amount, tb_amount, fg_amount	float64
-		var project_id									string
-		var err											error
+		var issue_amount	float64
+		var project_id		string
+		var err			error
 
 		// Set Arguments to local variables
 		project_id = args[0]
 
-		bk_amount, err = strconv.ParseFloat(args[1], 64)
+		issue_amount, err = strconv.ParseFloat(args[1], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for issue_amount to be issued")
+		}
+		fmt.Printf("Invoke (issue): project_id = %s\n", project_id)
+		fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
+
+		// Get current date and time
+		t := time.Now()
+
+		// making a Issue record
+		var year, month int
+		year = t.Year()
+		month = t.Month()
+		if month < 4 {
+			year = year + 1
+		}
+		
+		var issue_record Issue
+		issue_record = Issue {
+			ProjectId:	project_id,
+			Currency:	"JPY",
+			MinAmount:	0,
+			IssueAmount:	???,
+			Issuer:		"FG",
+			IssueYear:	year,
+		}
+		bytes, err := json.Marshal(issue_record)
+		if err != nil {
+			return nil, errors.New("Error creating new Issue record")
+		}
+		issue_key := project_id + "issue"
+		err = stub.PutState(issue_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("Unable to put the state for Issue")
+		}
+		return nil, nil
+	} else if function == "project" {		// project //
+		// issue (ProjectId, ProjectName, InvestType, InvestAmount,
+		//        AMCPercent, GCCPercent, GMCPercent, RBBCPercent, CICPercent,
+		//        BKDept, BKTeam, BKPerson, BKamount,
+		//        SCDept, SCTeam, SCPerson, SCamount,
+		//        TBDept, TBTeam, TBPerson, TBamount)
+		if len(args) != 21 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 21 arguments for project.")
+		}
+
+		// String to Float64
+		var project_id, project_name, invest_type				string
+		var invest_amount							float64
+		var amc_percent, gcc_percent, gmc_percent, rbbc_percent, cic_percent	float64
+		var bk_dept, bk_team, bk_person						string
+		var sc_dept, sc_team, sc_person						string
+		var tb_dept, tb_team, tb_person						string
+		var bk_amount, sc_amount, tb_amount					float64
+		var err			error
+
+		// Set Arguments to local variables
+		project_id =	args[0]
+		project_name = 	args[1]
+		invest_type = 	args[2]
+		invest_amount, err = strconv.ParseFloat(args[3], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for invest_amount to be issued")
+		}
+		amc_percent, err = strconv.ParseFloat(args[4], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for amc_percent to be issued")
+		}
+		gcc_percent, err = strconv.ParseFloat(args[5], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for gcc_percent to be issued")
+		}
+		gmc_percent, err = strconv.ParseFloat(args[6], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for gmc_percent to be issued")
+		}
+		rbbc_percent, err = strconv.ParseFloat(args[7], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for rbbc_percent to be issued")
+		}
+		cic_percent, err = strconv.ParseFloat(args[8], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for cic_percent to be issued")
+		}
+		bk_dept = 	args[9]
+		bk_team = 	args[10]
+		bk_person = 	args[11]
+		bk_amount, err = strconv.ParseFloat(args[12], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for bk_amount to be issued")
-		}
-		sc_amount, err = strconv.ParseFloat(args[2], 64)
+		}		
+		sc_dept = 	args[13]
+		sc_team = 	args[14]
+		sc_person = 	args[15]
+		sc_amount, err = strconv.ParseFloat(args[16], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for sc_amount to be issued")
-		}
-		tb_amount, err = strconv.ParseFloat(args[3], 64)
+		}		
+		tb_dept = 	args[17]
+		tb_team = 	args[18]
+		tb_person = 	args[19]
+		tb_amount, err = strconv.ParseFloat(args[20], 64)
 		if err != nil {
 			return nil, errors.New("Expecting float value for tb_amount to be issued")
-		}
-		fg_amount, err = strconv.ParseFloat(args[4], 64)
-		if err != nil {
-			return nil, errors.New("Expecting float value for fg_amount to be issued")
-		}
-		fmt.Printf("Invoke (issue): project_id = %f\n", project_id)
-		fmt.Printf("Invoke (issue): bk_amount = %f\n", bk_amount)
-		fmt.Printf("Invoke (issue): sc_amount = %f\n", sc_amount)
-		fmt.Printf("Invoke (issue): tb_amount = %f\n", tb_amount)
-		fmt.Printf("Invoke (issue): fg_amount = %f\n", fg_amount)
-
-		// making a record
+		}		
+		
+		// making a Project record
 		var project_record Project
 		project_record = Project {
-			ProjectId:	args[0],
+			ProjectId:	project_id,
+			ProjectName:	project_name,
+			InvestType:	invest_type,
+			InvestAmount:	invest_amount,
+			Confirmed:	false,
+			AMCPercent:	amc_percent,
+			GCCPercent:	gcc_percent,
+			GMCPercent:	gmc_percent,
+			RBBCPercent:	rbbc_percent,
+			CICPercent:	cic_percent,
+			BKDept:		bk_dept,
+			BKTeam:		bk_team,
+			BKPerson:	bk_person,
 			BKamount:	bk_amount,
+			BKConfirmed:	false,	
+			SCDept:		sc_dept,
+			SCTeam:		sc_team,
+			SCPerson:	sc_person,
 			SCamount:	sc_amount,
+			SCConfirmed:	false,	
+			TBDept:		tb_dept,
+			TBTeam:		tb_team,
+			TBPerson:	tb_person,
 			TBamount:	tb_amount,
-			FGamount:	fg_amount,
+			TBConfirmed:	false,
+		}
+		bytes, err := json.Marshal(project_record)
+		if err != nil {
+			return nil, errors.New("Error creating new Project record")
+		}
+		project_key := project_id + "project"
+		err = stub.PutState(project_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("Unable to put the state for Project")
+		}
+
+		return nil, nil
+	} else if function == "confirm" {		// project //
+		// issue (ProjectId, Entity)
+		if len(args) != 2 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 2 arguments for confirm.")
+		}
+
+		// Get the state from the ledger
+		var project_record Project
+		project_id := args[0]
+		project_asbytes, err := stub.GetState(project_id)
+		if err != nil {
+			return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+		}
+		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(confirm))}
+
+		if args[1] == "BK" {
+			project_record.BKConfirmed = true
+		} else if args[1] == "SC" {
+			project_record.SCConfirmed = true
+		} else if args[1] == "TB" {
+			project_record.TBConfirmed = true
+		} else {
+			return nil, errors.New("Expecting entity name to be confirmed")
 		}
 
 		bytes, err := json.Marshal(project_record)
 		if err != nil {
-			return nil, errors.New("Error creating new record")
+			return nil, errors.New("Error creating new Project record")
 		}
-
-		err = stub.PutState(project_id, []byte(bytes))
+		confirm_key := project_id + "confirm"
+		err = stub.PutState(confirm_key, []byte(bytes))
 		if err != nil {
-			return nil, errors.New("Unable to put the state")
+			return nil, errors.New("Unable to put the state for Project")
 		}
 
 		return nil, nil
@@ -199,14 +373,14 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("query is running " + function)
 
-	if function == "get_invest_summary" {
+	if function == "get_project" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
 			return nil, errors.New("Query: Incorrect number of arguments passed")
 		}
 
 		project_id := args[0]
-		return t.get_invest_summary(stub, project_id)
+		return t.get_project(stub, project_id)
 	}
 
 	// Error
@@ -215,24 +389,26 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 }
 
 //
-// get_invest_summary
+// get_project
 //
-func (t *SimpleChaincode) get_invest_summary(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
-	var err				error
+func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	var err			error
 	var project_record	Project
 
 	// Get the state from the ledger
-	project_summary_asbytes, err := stub.GetState(project_id)
+	project_key := project_id + "project"
+	project_asbytes, err := stub.GetState(project_key)
 	if err != nil {
 		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
 	}
 
-	if err = json.Unmarshal(project_summary_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_summary_asbytes))}
-	fmt.Printf("Invoke (issue): project_id = %f\n", project_id)
-	fmt.Printf("Invoke (issue): bk_amount = %f\n", project_record.BKamount)
-	fmt.Printf("Invoke (issue): sc_amount = %f\n", project_record.SCamount)
-	fmt.Printf("Invoke (issue): tb_amount = %f\n", project_record.TBamount)
-	fmt.Printf("Invoke (issue): fg_amount = %f\n", project_record.FGamount)
+	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_asbytes))}
+	fmt.Printf("Query (get_project): project_id = %s\n", project_id)
+	fmt.Printf("Query (get_project): project_name = %s\n", project_name)
+	fmt.Printf("Query (get_project): bk_amount = %f\n", project_record.BKamount)
+	fmt.Printf("Query (get_project): sc_amount = %f\n", project_record.SCamount)
+	fmt.Printf("Query (get_project): tb_amount = %f\n", project_record.TBamount)
+	fmt.Printf("Query (get_project): fg_amount = %f\n", project_record.FGamount)
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
