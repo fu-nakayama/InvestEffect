@@ -339,7 +339,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
 		}
-		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(confirm))}
+		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {return nil, errors.New("Error unmarshalling data "+string(project_asbytes))}
 
 		if args[1] == "BK" {
 			project_record.BKConfirmed = true
