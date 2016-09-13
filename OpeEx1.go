@@ -119,7 +119,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		Entity:	"BK",
 		Amount:	0,
 	}
-	bytes, err := json.Marshal(amount_record)
+	bytes, err = json.Marshal(amount_record)
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
@@ -132,7 +132,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		Entity:	"SC",
 		Amount:	0,
 	}
-	bytes, err := json.Marshal(amount_record)
+	bytes, err = json.Marshal(amount_record)
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
@@ -145,7 +145,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		Entity:	"TB",
 		Amount:	0,
 	}
-	bytes, err := json.Marshal(amount_record)
+	bytes, err = json.Marshal(amount_record)
 	if err != nil {
 		return nil, errors.New("Error creating new record")
 	}
