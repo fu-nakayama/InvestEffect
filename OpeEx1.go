@@ -40,15 +40,15 @@ type Distribution struct {
 	BKDept		string	`json:"bk_dept"`
 	BKTeam		string	`json:"bk_team"`
 	BKPerson	string	`json:"bk_person"`
-	BKamount	float64	`json:"bk_amount"`
+	BKAmount	float64	`json:"bk_amount"`
 	SCDept		string	`json:"sc_dept"`
 	SCTeam		string	`json:"sc_team"`
 	SCPerson	string	`json:"sc_person"`
-	SCamount	float64	`json:"sc_amount"`
+	SCAmount	float64	`json:"sc_amount"`
 	TBDept		string	`json:"tb_dept"`
 	TBTeam		string	`json:"tb_team"`
 	TBPerson	string	`json:"tb_person"`
-	TBamount	float64	`json:"tb_amount"`
+	TBAmount	float64	`json:"tb_amount"`
 }
 
 // Record of receivable
@@ -81,17 +81,17 @@ type Project struct {
 	BKDept		string	`json:"bk_dept"`
 	BKTeam		string	`json:"bk_team"`
 	BKPerson	string	`json:"bk_person"`
-	BKamount	float64	`json:"bk_amount"`
+	BKAmount	float64	`json:"bk_amount"`
 	BKConfirmed	bool	`json:"bk_confirmed"`	// Yes: true, No: false	
 	SCDept		string	`json:"sc_dept"`
 	SCTeam		string	`json:"sc_team"`
 	SCPerson	string	`json:"sc_person"`
-	SCamount	float64	`json:"sc_amount"`
+	SCAmount	float64	`json:"sc_amount"`
 	SCConfirmed	bool	`json:"sc_confirmed"`	// Yes: true, No: false	
 	TBDept		string	`json:"tb_dept"`
 	TBTeam		string	`json:"tb_team"`
 	TBPerson	string	`json:"tb_person"`
-	TBamount	float64	`json:"tb_amount"`
+	TBAmount	float64	`json:"tb_amount"`
 	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false
 }
 
