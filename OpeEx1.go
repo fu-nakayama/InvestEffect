@@ -219,9 +219,9 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	} else if function == "project" {		// project //
 		// issue (ProjectId, ProjectName, InvestType, InvestAmount,
 		//        AMCPercent, GCCPercent, GMCPercent, RBBCPercent, CICPercent,
-		//        BKDept, BKTeam, BKPerson, BKamount,
-		//        SCDept, SCTeam, SCPerson, SCamount,
-		//        TBDept, TBTeam, TBPerson, TBamount)
+		//        BKDept, BKTeam, BKPerson, BKAmount,
+		//        SCDept, SCTeam, SCPerson, SCAmount,
+		//        TBDept, TBTeam, TBPerson, TBAmount)
 		if len(args) != 21 {
 			return nil, errors.New("Incorrect number of arguments. Expecting 21 arguments for project.")
 		}
@@ -302,17 +302,17 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			BKDept:		bk_dept,
 			BKTeam:		bk_team,
 			BKPerson:	bk_person,
-			BKamount:	bk_amount,
+			BKAmount:	bk_amount,
 			BKConfirmed:	false,	
 			SCDept:		sc_dept,
 			SCTeam:		sc_team,
 			SCPerson:	sc_person,
-			SCamount:	sc_amount,
+			SCAmount:	sc_amount,
 			SCConfirmed:	false,	
 			TBDept:		tb_dept,
 			TBTeam:		tb_team,
 			TBPerson:	tb_person,
-			TBamount:	tb_amount,
+			TBAmount:	tb_amount,
 			TBConfirmed:	false,
 		}
 		bytes, err := json.Marshal(project_record)
@@ -594,11 +594,15 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	fmt.Printf("Query (get_project): bk_dept = %s\n",	project_record.BKDept)
 	fmt.Printf("Query (get_project): bk_team = %s\n",	project_record.BKTeam)
 	fmt.Printf("Query (get_project): bk_person = %s\n",	project_record.BKPerson)
-	fmt.Printf("Query (get_project): bk_amount = %f\n",	project_record.BKamount)
+	fmt.Printf("Query (get_project): bk_amount = %f\n",	project_record.BKAmount)
 	fmt.Printf("Query (get_project): sc_dept = %s\n",	project_record.SCDept)
 	fmt.Printf("Query (get_project): sc_team = %s\n",	project_record.SCTeam)
 	fmt.Printf("Query (get_project): sc_person = %s\n",	project_record.SCPerson)
-	fmt.Printf("Query (get_project): sc_amount = %f\n",	project_record.SCamount)
+	fmt.Printf("Query (get_project): sc_amount = %f\n",	project_record.SCAmount)
+	fmt.Printf("Query (get_project): tb_dept = %s\n",	project_record.TBDept)
+	fmt.Printf("Query (get_project): tb_team = %s\n",	project_record.TBTeam)
+	fmt.Printf("Query (get_project): tb_person = %s\n",	project_record.TBPerson)
+	fmt.Printf("Query (get_project): tb_amount = %f\n",	project_record.TBAmount)
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
