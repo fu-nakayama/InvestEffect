@@ -764,7 +764,7 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 	AmountStr = string(AmountBytes)
 
 	// String to Float64
-	Amount, err = strconv.ParseFloat(args[1], 64)
+	Amount, err = strconv.ParseFloat(AmountStr, 64)
 	if err != nil {
 		return nil, errors.New("Expecting float value for Amount to be issued")
 	}
