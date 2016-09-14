@@ -31,7 +31,7 @@ type Issue struct {
 
 // Record of distribution
 type Distribution struct {
-	ProjectId	string	`json:"project_id"`	// {project_id} + "issue"
+	ProjectId	string	`json:"project_id"`	// {project_id} + "dist"
 	Currency	string	`json:"currency"`	// "JPY"
 	MinAmount	float64	`json:"min_amount"`	// "0.01"
 	IssueAmount	float64	`json:"issue_amount"`
@@ -423,17 +423,22 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 		return nil, errors.New("Error unmarshalling data "+string(project_asbytes))
 	}
 	fmt.Printf("Query (get_project): project_id = %s\n",	project_id)
-	fmt.Printf("Query (get_project): curency = %s\n",	project_record.Curerncy)
-	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
-	fmt.Printf("Query (get_project): amc__amount = %f\n",	project_record.AMCAmount)
-	fmt.Printf("Query (get_project): gcc_percent = %f\n",	project_record.AMCPercent)
-	fmt.Printf("Query (get_project): gcc__amount = %f\n",	project_record.AMCAmount)
-	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
-	fmt.Printf("Query (get_project): amc__amount = %f\n",	project_record.AMCAmount)
-	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
-	fmt.Printf("Query (get_project): amc__amount = %f\n",	project_record.AMCAmount)
-	fmt.Printf("Query (get_project): tb_amount = %f\n",	project_record.TBamount)
+	fmt.Printf("Query (get_project): project_name = %s\n",	project_record.ProjectName)
+	fmt.Printf("Query (get_project): invest_type = %s\n",	project_record.InvestType)
 	fmt.Printf("Query (get_project): invest_amount = %f\n",	project_record.InvestAmount)
+	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
+	fmt.Printf("Query (get_project): gcc_percent = %f\n",	project_record.GCCPercent)
+	fmt.Printf("Query (get_project): gmcp_percent = %f\n",	project_record.GMCCPercent)
+	fmt.Printf("Query (get_project): rbbc_percent = %f\n",	project_record.RBBCPercent)
+	fmt.Printf("Query (get_project): cic_percent = %f\n",	project_record.CICPercent)
+	fmt.Printf("Query (get_project): bk_dept = %s\n",	project_record.BKDept)
+	fmt.Printf("Query (get_project): bk_team = %s\n",	project_record.BKTeam)
+	fmt.Printf("Query (get_project): bk_person = %s\n",	project_record.BKPerson)
+	fmt.Printf("Query (get_project): bk_amount = %f\n",	project_record.BKamount)
+	fmt.Printf("Query (get_project): sc_dept = %s\n",	project_record.SCDept)
+	fmt.Printf("Query (get_project): sc_team = %s\n",	project_record.SCTeam)
+	fmt.Printf("Query (get_project): sc_person = %s\n",	project_record.SCPerson)
+	fmt.Printf("Query (get_project): sc_amount = %f\n",	project_record.SCamount)
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
