@@ -428,7 +428,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	fmt.Printf("Query (get_project): invest_amount = %f\n",	project_record.InvestAmount)
 	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
 	fmt.Printf("Query (get_project): gcc_percent = %f\n",	project_record.GCCPercent)
-	fmt.Printf("Query (get_project): gmcp_percent = %f\n",	project_record.GMCCPercent)
+	fmt.Printf("Query (get_project): gmc_percent = %f\n",	project_record.GMCPercent)
 	fmt.Printf("Query (get_project): rbbc_percent = %f\n",	project_record.RBBCPercent)
 	fmt.Printf("Query (get_project): cic_percent = %f\n",	project_record.CICPercent)
 	fmt.Printf("Query (get_project): bk_dept = %s\n",	project_record.BKDept)
