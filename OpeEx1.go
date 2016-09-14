@@ -542,7 +542,15 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("query is running " + function)
 
-	if function == "get_project" {
+	if function == "get_current_amount" {
+		if len(args) != 1 {
+			fmt.Printf("Incorrect number of arguments passed");
+			return nil, errors.New("Query: Incorrect number of arguments passed")
+		}
+
+		entity := args[0]
+		return t.get_current_amount(stub, entity)
+	} else if function == "get_project" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
 			return nil, errors.New("Query: Incorrect number of arguments passed")
@@ -550,6 +558,22 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 		project_id := args[0]
 		return t.get_project(stub, project_id)
+	} else if function == "get_issue" {
+		if len(args) != 1 {
+			fmt.Printf("Incorrect number of arguments passed");
+			return nil, errors.New("Query: Incorrect number of arguments passed")
+		}
+
+		project_id := args[0]
+		return t.get_issue(stub, project_id)
+	} else if function == "get_distribution" {
+		if len(args) != 1 {
+			fmt.Printf("Incorrect number of arguments passed");
+			return nil, errors.New("Query: Incorrect number of arguments passed")
+		}
+
+		project_id := args[0]
+		return t.get_distribution(stub, project_id)
 	} else if function == "get_receivable" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
