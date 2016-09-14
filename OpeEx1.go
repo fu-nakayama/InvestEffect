@@ -419,9 +419,11 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 
 		// String to Float64
-		var project_id							string
-		var issue_amount, bk_amount, sc_amount, tb_amount		float64
-		var bk_dept, bk_team, bk_person, sc_dept, sc_team, sc_person	string
+		var project_id						string
+		var issue_amount, bk_amount, sc_amount, tb_amount	float64
+		var bk_dept, bk_team, bk_person				string
+		var sc_dept, sc_team, sc_person				string
+		var tb_dept, tb_team, tb_person				string
 		var err															error
 
 		// Set Arguments to local variables
