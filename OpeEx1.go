@@ -355,7 +355,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if project_record.BKConfirmed == true && 
 		   project_record.SCConfirmed == true &&
 		   project_record.TBConfirmed == true {
-		   	project_record.Confirmed == true
+		   	project_record.Confirmed = true
 		}
 
 		bytes, err := json.Marshal(project_record)
