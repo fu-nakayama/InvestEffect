@@ -23,7 +23,7 @@ type Amount struct {
 type Issue struct {
 	ProjectId	string	`json:"project_id"`	// {project_id} + "issue"
 	Currency	string	`json:"currency"`	// "JPY"
-	Rate		float64	`json:"rate"`		//
+	IssueRate	float64	`json:"issue_rate"`		//
 	IssueAmount	float64	`json:"issue_amount"`
 	Issuer		string	`json:"issuer"`		// "FG"
 	IssueYear	uint16	`json:"issue_year"`	// Fiscal Year
