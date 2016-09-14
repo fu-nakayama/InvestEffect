@@ -566,6 +566,37 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 }
 
 //
+// get_issue
+//
+func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	var err			error
+	var issue_record	Issue
+
+	// Get the state from the ledger
+	issue_key := project_id + "issue"
+	issue_asbytes, err := stub.GetState(issue_key)
+	if err != nil {
+		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+	}
+
+	if err = json.Unmarshal(issue_asbytes, &issue_record) ; err != nil {
+		return nil, errors.New("Error unmarshalling data "+string(issue_asbytes))
+	}
+	fmt.Printf("Query (get_issue): project_id = %s\n",	project_id)
+	fmt.Printf("Query (get_issue): currency = %s\n",	issue_record.Currency)
+	fmt.Printf("Query (get_issue): issue_rate = %f\n",	issue_record.IssueRate)
+	fmt.Printf("Query (get_issue): issue_amount = %f\n",	issue_record.IssueAmount)
+	fmt.Printf("Query (get_issue): issuer = %s\n",		issue_record.Issuer)
+	fmt.Printf("Query (get_issue): issue_year = %d\n",	issue_record.IssueYear)
+
+	bytes, err := json.Marshal(issue_record)
+	if err != nil {
+		return nil, errors.New("Error creating returning record")
+	}
+	return []byte(bytes), nil
+}
+
+//
 // get_project
 //
 func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
@@ -612,6 +643,49 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 }
 
 //
+// get_distribution
+//
+func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	var err						error
+	var distribution_record		Distribution
+
+	// Get the state from the ledger
+	distribution_key := project_id + "distribution"
+	distribution_asbytes, err := stub.GetState(distribution_key)
+	if err != nil {
+		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+	}
+
+	if err = json.Unmarshal(distribution_asbytes, &distribution_record) ; err != nil {
+		return nil, errors.New("Error unmarshalling data "+string(distribution_asbytes))
+	}
+	fmt.Printf("Query (get_distribution): project_id = %s\n",	project_id)
+	fmt.Printf("Query (get_distribution): currency = %s\n",		distribution_record.Currency)
+	fmt.Printf("Query (get_distribution): issue_rate = %f\n",	distribution_record.IssueRate)
+	fmt.Printf("Query (get_distribution): issue_amount = %f\n",	distribution_record.IssueAmount)
+	fmt.Printf("Query (get_distribution): issuer = %s\n",		distribution_record.Issuer)
+	fmt.Printf("Query (get_distribution): issue_year = %d\n",	distribution_record.IssueYear)
+	fmt.Printf("Query (get_distribution): bk_dept = %s\n",		distribution_record.BKDept)
+	fmt.Printf("Query (get_distribution): bk_team = %s\n",		distribution_record.BKTeam)
+	fmt.Printf("Query (get_distribution): bk_person = %s\n",	distribution_record.BKPerson)
+	fmt.Printf("Query (get_distribution): bk_amount = %f\n",	distribution_record.BKAmount)
+	fmt.Printf("Query (get_distribution): sc_dept = %s\n",		distribution_record.SCDept)
+	fmt.Printf("Query (get_distribution): sc_team = %s\n",		distribution_record.SCTeam)
+	fmt.Printf("Query (get_distribution): sc_person = %s\n",	distribution_record.SCPerson)
+	fmt.Printf("Query (get_distribution): sc_amount = %f\n",	distribution_record.SCAmount)
+	fmt.Printf("Query (get_distribution): tb_dept = %s\n",		distribution_record.TBDept)
+	fmt.Printf("Query (get_distribution): tb_team = %s\n",		distribution_record.TBTeam)
+	fmt.Printf("Query (get_distribution): tb_person = %s\n",	distribution_record.TBPerson)
+	fmt.Printf("Query (get_distribution): tb_amount = %f\n",	distribution_record.TBAmount)
+
+	bytes, err := json.Marshal(distribution_record)
+	if err != nil {
+		return nil, errors.New("Error creating returning record")
+	}
+	return []byte(bytes), nil
+}
+
+//
 // get_receivable
 //
 func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
@@ -646,6 +720,33 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 		return nil, errors.New("Error creating returning record")
 	}
 	return []byte(bytes), nil
+}
+
+//
+// get_current_amount
+//
+func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity string) ([]byte, error) {
+	var err		error
+	var AmountStr	string
+
+	// Get the state from the ledger
+	AmountBytes, err := stub.GetState(entity)
+	if err != nil {
+		return nil, errors.New("Error: Failed to get state for entity: " + entity)
+	}
+
+	// Bytes to String
+	AmountStr = string(AmountBytes)
+
+	// String to Float64
+	Amount, err = strconv.ParseFloat(args[1], 64)
+	if err != nil {
+		return nil, errors.New("Expecting float value for Amount to be issued")
+	}
+	fmt.Printf("Query (get_receivable): entity = %s\n",	entity)
+	fmt.Printf("Query (get_receivable): amount = %f\n",	Amount)
+
+	return []byte(AmountStr), nil
 }
 
 //
