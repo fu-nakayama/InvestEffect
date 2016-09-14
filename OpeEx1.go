@@ -469,7 +469,7 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 	fmt.Printf("Query (get_receivable): amc_percent = %f\n",	receivable_record.AMCPercent)
 	fmt.Printf("Query (get_receivable): amc_amount = %f\n",		receivable_record.AMCAmount)
 	fmt.Printf("Query (get_receivable): gcc_percent = %f\n",	receivable_record.GCCPercent)
-	fmt.Printf("Query (get_receivable): gcc_amount = %f\n",		receivable_record.GCCCamount)
+	fmt.Printf("Query (get_receivable): gcc_amount = %f\n",		receivable_record.GCCamount)
 	fmt.Printf("Query (get_receivable): gmc_percent = %f\n",	receivable_record.GMCPercent)
 	fmt.Printf("Query (get_receivable): gmc_amount = %f\n",		receivable_record.GMCAmount)
 	fmt.Printf("Query (get_receivable): rbbc_percent = %f\n",	receivable_record.RBBCPercent)
