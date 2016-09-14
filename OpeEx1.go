@@ -23,7 +23,7 @@ type Amount struct {
 type Issue struct {
 	ProjectId	string	`json:"project_id"`	// {project_id} + "issue"
 	Currency	string	`json:"currency"`	// "JPY"
-	MinAmount	float64	`json:"min_amount"`
+	Rate		float64	`json:"rate"`		//
 	IssueAmount	float64	`json:"issue_amount"`
 	Issuer		string	`json:"issuer"`		// "FG"
 	IssueYear	uint16	`json:"issue_year"`	// Fiscal Year
@@ -31,9 +31,9 @@ type Issue struct {
 
 // Record of distribution
 type Distribution struct {
-	ProjectId	string	`json:"project_id"`	// {project_id} + "dist"
+	ProjectId	string	`json:"project_id"`	// {project_id} + "distribution"
 	Currency	string	`json:"currency"`	// "JPY"
-	MinAmount	float64	`json:"min_amount"`	// "0.01"
+	IssueRate	float64	`json:"issue_rate"`	// "1"
 	IssueAmount	float64	`json:"issue_amount"`
 	Issuer		float64	`json:"issuer"`		// "FG"
 	IssueYear	uint16	`json:"issue_year"`	// Fiscal Year
@@ -201,7 +201,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		issue_record = Issue {
 			ProjectId:	project_id,
 			Currency:	"JPY",
-			MinAmount:	0,
+			IssueRate:	1,
 			IssueAmount:	issue_amount,
 			Issuer:		"FG",
 			IssueYear:	year,
@@ -323,6 +323,164 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		err = stub.PutState(project_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("Unable to put the state for Project")
+		}
+		return nil, nil
+	} else if function == "receivable" {		// receivable //
+		// issue (ProjectId, AMCPercent, AMCAmount,
+		//        GCCPercent, GCCAmount, GMCPercent, GMCAmount,
+		//        RBBCPercent, RBBCAmount, CICPercent, CICAmount)
+		if len(args) != 11 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 11 arguments for receivable.")
+		}
+
+		// String to Float64
+		var project_id												string
+		var amc_percent, amc_amount, gcc_percent, gcc_amount		float64
+		var gmc_percent, gmc_amount, rbbc_percent, rbbc_amount		float64
+		var cic_percent, cic_amount									float64
+		var err														error
+
+		// Set Arguments to local variables
+		project_id =	args[0]
+		amc_percent, err = strconv.ParseFloat(args[1], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for amc_percent to be issued")
+		}
+		amc_amount, err = strconv.ParseFloat(args[2], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for amc_amount to be issued")
+		}
+		gcc_percent, err = strconv.ParseFloat(args[3], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for gcc_percent to be issued")
+		}
+		gcc_amount, err = strconv.ParseFloat(args[4], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for gcc_amount to be issued")
+		}
+		gmc_percent, err = strconv.ParseFloat(args[5], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for gmc_percent to be issued")
+		}
+		gmc_amount, err = strconv.ParseFloat(args[6], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for gmc_amount to be issued")
+		}
+		rbbc_percent, err = strconv.ParseFloat(args[7], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for rbbc_percent to be issued")
+		}
+		rbbc_amount, err = strconv.ParseFloat(args[8], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for rbbc_amount to be issued")
+		}
+		cic_percent, err = strconv.ParseFloat(args[9], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for cic_percent to be issued")
+		}
+		cic_amount, err = strconv.ParseFloat(args[10], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for cic_amount to be issued")
+		}
+		
+		// making a Receivable record
+		var receivable_record Receivable
+		receivable_record = Receivable {
+			ProjectId:	project_id,
+			Currency:	"JPY",
+			AMCPercent:	amc_percent,
+			AMCAmount:	amc_amount,
+			GCCPercent:	gcc_percent,
+			GCCAmount:	gcc_amount,
+			GMCPercent:	gmc_percent,
+			GMCAmount:	gmc_amount,
+			RBBCPercent:	rbbc_percent,
+			RBBCAmount:	rbbc_amount,
+			CICPercent:	cic_percent,
+			CICAmount:	cic_amount,
+		}
+		bytes, err := json.Marshal(receivable_record)
+		if err != nil {
+			return nil, errors.New("Error creating new Receivable record")
+		}
+		receivable_key := project_id + "receivable"
+		err = stub.PutState(receivable_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("Unable to put the state for Receivable")
+		}
+		return nil, nil
+	} else if function == "distribution" {		// distribution //
+		// issue (ProjectId, IssueAmount,
+		//        BKDept, BKTeam, BKPerson, BKAmount,
+		//        SCDept, SCTeam, SCPerson, SCAmount,
+		//        TBDept, TBTeam, TBPerson, TBAmount)
+		if len(args) != 14 {
+			return nil, errors.New("Incorrect number of arguments. Expecting 14 arguments for distribution.")
+		}
+
+		// String to Float64
+		var project_id													string
+		var issue_amount, bk_amount, sc_amount, tb_amount				float64
+		var bk_dept, bk_team, bk_person, sc_dept, sc_team, sc_person	float64
+		var err															error
+
+		// Set Arguments to local variables
+		project_id =	args[0]
+		issue_amount, err = strconv.ParseFloat(args[1], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for amc_percent to be issued")
+		}
+		bk_dept =		args[2]
+		bk_team =		args[3]
+		bk_person =		args[4]
+		bk_amount, err = strconv.ParseFloat(args[5], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for bk_amount to be issued")
+		}
+		sc_dept =		args[6]
+		sc_team =		args[7]
+		sc_person =		args[8]
+		sc_amount, err = strconv.ParseFloat(args[9], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for sc_amount to be issued")
+		}
+		tb_dept =		args[10]
+		tb_team =		args[11]
+		tb_person =		args[12]
+		tb_amount, err = strconv.ParseFloat(args[13], 64)
+		if err != nil {
+			return nil, errors.New("Expecting float value for tb_amount to be issued")
+		}
+		
+		// making a Distribution record
+		var distribution_record Distribution
+		distribution_record = Distribution {
+			ProjectId:	project_id,
+			Currency:	"JPY",
+			IssueRate:	1,
+			IssueAmount:	issue_amount,
+			Issuer:	"FG",
+			BKDept:	bk_dept,
+			BKTeam:	bk_team,
+			BKPerson:	bk_person,
+			BKAmount:	bk_amount,
+			SCDept:	sc_dept,
+			SCTeam:	sc_team,
+			SCPerson:	sc_person,
+			SCAmount:	sc_amount,
+			TBDept:	tb_dept,
+			TBTeam:	tb_team,
+			TBPerson:	tb_person,
+			TBAmount:	tb_amount,
+		}
+		bytes, err := json.Marshal(distribution_record)
+		if err != nil {
+			return nil, errors.New("Error creating new Distribution record")
+		}
+		distribution_key := project_id + "distribution"
+		err = stub.PutState(distribution_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("Unable to put the state for Distribution")
 		}
 
 		return nil, nil
