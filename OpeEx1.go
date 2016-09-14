@@ -752,6 +752,7 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity string) ([]byte, error) {
 	var err		error
 	var AmountStr	string
+	var Amount	float64
 
 	// Get the state from the ledger
 	AmountBytes, err := stub.GetState(entity)
