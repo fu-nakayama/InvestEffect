@@ -390,14 +390,14 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 		project_id := args[0]
 		return t.get_project(stub, project_id)
-	} else if function == "get_project" {
-		if len(get_receivable) != 1 {
+	} else if function == "get_receivable" {
+		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
 			return nil, errors.New("Query: Incorrect number of arguments passed")
 		}
 
 		project_id := args[0]
-		return t.get_project(stub, project_id)
+		return t.get_receivable(stub, project_id)
 	}	
 
 	// Error
