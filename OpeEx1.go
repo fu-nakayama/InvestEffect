@@ -669,7 +669,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 //
 // get_distribution
 //
-func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
 	var err						error
 	var distribution_record		Distribution
 
