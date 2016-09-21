@@ -108,11 +108,11 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err := json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("Error creating new record")
+		return nil, errors.New("##### OpeEx1: Error creating new record #####")
 	}
 	err = stub.PutState("FG", []byte(bytes))
 	if err != nil {
-		return nil, errors.New("Unable to put the state")
+		return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 	}
 
 	amount_record = Amount {
@@ -121,11 +121,11 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err = json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("Error creating new record")
+		return nil, errors.New("##### OpeEx1: Error creating new record #####")
 	}
 	err = stub.PutState("BK", []byte(bytes))
 	if err != nil {
-		return nil, errors.New("Unable to put the state")
+		return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 	}
 
 	amount_record = Amount {
@@ -134,11 +134,11 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err = json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("Error creating new record")
+		return nil, errors.New("##### OpeEx1: Error creating new record #####")
 	}
 	err = stub.PutState("SC", []byte(bytes))
 	if err != nil {
-		return nil, errors.New("Unable to put the state")
+		return nil, errors.New("##### OpeEx1:  Unable to put the state #####")
 	}
 
 	amount_record = Amount {
@@ -147,11 +147,11 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err = json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("Error creating new record")
+		return nil, errors.New("##### OpeEx1: Error creating new record #####")
 	}
 	err = stub.PutState("TB", []byte(bytes))
 	if err != nil {
-		return nil, errors.New("Unable to put the state")
+		return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 	}
 
 	// Nothing to do here, just return
@@ -167,7 +167,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	if function == "issue" {			// issue //
 		// issue (ProjectId, Issueamount)
 		if len(args) != 2 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 2 arguments for issue.")
+			return nil, errors.New("##### OpeEx1:  Incorrect number of arguments. Expecting 2 arguments for issue #####")
 		}
 
 		// String to Float64
@@ -180,7 +180,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		issue_amount, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for issue_amount to be issued")
+			return nil, errors.New("##### OpeEx1: Expecting float value for issue_amount to be issued #####")
 		}
 		fmt.Printf("Invoke (issue): project_id = %s\n", project_id)
 		fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
@@ -208,12 +208,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		bytes, err := json.Marshal(issue_record)
 		if err != nil {
-			return nil, errors.New("Error creating new Issue record")
+			return nil, errors.New("##### OpeEx1: Error creating new Issue record #####")
 		}
 		issue_key := project_id + "issue"
 		err = stub.PutState(issue_key, []byte(bytes))
 		if err != nil {
-			return nil, errors.New("Unable to put the state for Issue")
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
 		}
 		return nil, nil
 	} else if function == "project" {		// project //
@@ -223,7 +223,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		//        SCDept, SCTeam, SCPerson, SCAmount,
 		//        TBDept, TBTeam, TBPerson, TBAmount)
 		if len(args) != 21 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 21 arguments for project.")
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 21 arguments for project #####")
 		}
 
 		// String to Float64
@@ -242,48 +242,48 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		invest_type = 	args[2]
 		invest_amount, err = strconv.ParseFloat(args[3], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for invest_amount to be issued")
+			invest_amount = 0
 		}
 		amc_percent, err = strconv.ParseFloat(args[4], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for amc_percent to be issued")
+			amc_percent = 0
 		}
 		gcc_percent, err = strconv.ParseFloat(args[5], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for gcc_percent to be issued")
+			gcc_percent = 0
 		}
 		gmc_percent, err = strconv.ParseFloat(args[6], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for gmc_percent to be issued")
+			gmc_percent = 0
 		}
 		rbbc_percent, err = strconv.ParseFloat(args[7], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for rbbc_percent to be issued")
+			rbbc_percent = 0
 		}
 		cic_percent, err = strconv.ParseFloat(args[8], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for cic_percent to be issued")
+			cic_percent = 0
 		}
 		bk_dept = 	args[9]
 		bk_team = 	args[10]
 		bk_person = 	args[11]
 		bk_amount, err = strconv.ParseFloat(args[12], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for bk_amount to be issued")
+			bk_amount = 0
 		}		
 		sc_dept = 	args[13]
 		sc_team = 	args[14]
 		sc_person = 	args[15]
 		sc_amount, err = strconv.ParseFloat(args[16], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for sc_amount to be issued")
+			sc_amount = 0
 		}		
 		tb_dept = 	args[17]
 		tb_team = 	args[18]
 		tb_person = 	args[19]
 		tb_amount, err = strconv.ParseFloat(args[20], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for tb_amount to be issued")
+			tb_amount = 0
 		}		
 		
 		// making a Project record
@@ -317,12 +317,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		bytes, err := json.Marshal(project_record)
 		if err != nil {
-			return nil, errors.New("Error creating new Project record")
+			return nil, errors.New("##### OpeEx1: Error on creating new Project record #####")
 		}
 		project_key := project_id + "project"
 		err = stub.PutState(project_key, []byte(bytes))
 		if err != nil {
-			return nil, errors.New("Unable to put the state for Project")
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
 		}
 		return nil, nil
 	} else if function == "receivable" {		// receivable //
@@ -330,7 +330,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		//        GCCPercent, GCCAmount, GMCPercent, GMCAmount,
 		//        RBBCPercent, RBBCAmount, CICPercent, CICAmount)
 		if len(args) != 11 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 11 arguments for receivable.")
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 11 arguments for receivable #####")
 		}
 
 		// String to Float64
@@ -344,43 +344,43 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		project_id =	args[0]
 		amc_percent, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for amc_percent to be issued")
+			amc_percent = 0
 		}
 		amc_amount, err = strconv.ParseFloat(args[2], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for amc_amount to be issued")
+			amc_amount = 0
 		}
 		gcc_percent, err = strconv.ParseFloat(args[3], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for gcc_percent to be issued")
+			gcc_percent = 0
 		}
 		gcc_amount, err = strconv.ParseFloat(args[4], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for gcc_amount to be issued")
+			gcc_amount = 0
 		}
 		gmc_percent, err = strconv.ParseFloat(args[5], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for gmc_percent to be issued")
+			gmc_percent = 0
 		}
 		gmc_amount, err = strconv.ParseFloat(args[6], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for gmc_amount to be issued")
+			gmc_amount = 0
 		}
 		rbbc_percent, err = strconv.ParseFloat(args[7], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for rbbc_percent to be issued")
+			rbbc_percent = 0
 		}
 		rbbc_amount, err = strconv.ParseFloat(args[8], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for rbbc_amount to be issued")
+			rbbc_amount = 0
 		}
 		cic_percent, err = strconv.ParseFloat(args[9], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for cic_percent to be issued")
+			cic_percent = 0
 		}
 		cic_amount, err = strconv.ParseFloat(args[10], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for cic_amount to be issued")
+			cic_amount = 0
 		}
 		
 		// making a Receivable record
@@ -401,12 +401,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		bytes, err := json.Marshal(receivable_record)
 		if err != nil {
-			return nil, errors.New("Error creating new Receivable record")
+			return nil, errors.New("##### OpeEx1: Error on creating new Receivable record #####")
 		}
 		receivable_key := project_id + "receivable"
 		err = stub.PutState(receivable_key, []byte(bytes))
 		if err != nil {
-			return nil, errors.New("Unable to put the state for Receivable")
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Receivable #####")
 		}
 		return nil, nil
 	} else if function == "distribution" {		// distribution //
@@ -415,7 +415,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		//        SCDept, SCTeam, SCPerson, SCAmount,
 		//        TBDept, TBTeam, TBPerson, TBAmount)
 		if len(args) != 14 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 14 arguments for distribution.")
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 14 arguments for distribution #####")
 		}
 
 		// String to Float64
@@ -430,28 +430,28 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		project_id =	args[0]
 		issue_amount, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for amc_percent to be issued")
+			issue_amount = 0
 		}
 		bk_dept =		args[2]
 		bk_team =		args[3]
 		bk_person =		args[4]
 		bk_amount, err = strconv.ParseFloat(args[5], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for bk_amount to be issued")
+			bk_amount = 0
 		}
 		sc_dept =		args[6]
 		sc_team =		args[7]
 		sc_person =		args[8]
 		sc_amount, err = strconv.ParseFloat(args[9], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for sc_amount to be issued")
+			sc_amount = 0
 		}
 		tb_dept =		args[10]
 		tb_team =		args[11]
 		tb_person =		args[12]
 		tb_amount, err = strconv.ParseFloat(args[13], 64)
 		if err != nil {
-			return nil, errors.New("Expecting float value for tb_amount to be issued")
+			tb_amount = 0
 		}
 		
 		// making a Distribution record
@@ -477,19 +477,19 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		bytes, err := json.Marshal(distribution_record)
 		if err != nil {
-			return nil, errors.New("Error creating new Distribution record")
+			return nil, errors.New("##### OpeEx1: Error on creating new Distribution record #####")
 		}
 		distribution_key := project_id + "distribution"
 		err = stub.PutState(distribution_key, []byte(bytes))
 		if err != nil {
-			return nil, errors.New("Unable to put the state for Distribution")
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Distribution #####")
 		}
 
 		return nil, nil
 	} else if function == "confirm" {		// project //
 		// issue (ProjectId, Entity)
 		if len(args) != 2 {
-			return nil, errors.New("Incorrect number of arguments. Expecting 2 arguments for confirm.")
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 2 arguments for confirm #####")
 		}
 
 		// Get the state from the ledger
@@ -497,10 +497,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		project_id := args[0]
 		project_asbytes, err := stub.GetState(project_id)
 		if err != nil {
-			return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 		}
 		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
-			return nil, errors.New("Error unmarshalling data "+string(project_asbytes))
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 		}
 
 		if args[1] == "BK" {
@@ -510,7 +510,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		} else if args[1] == "TB" {
 			project_record.TBConfirmed = true
 		} else {
-			return nil, errors.New("Expecting entity name to be confirmed")
+			return nil, errors.New("##### OpeEx1: Expecting entity name to be confirmed #####")
 		}
 		if project_record.BKConfirmed == true && 
 		   project_record.SCConfirmed == true &&
@@ -520,12 +520,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		bytes, err := json.Marshal(project_record)
 		if err != nil {
-			return nil, errors.New("Error creating new Project record")
+			return nil, errors.New("##### OpeEx1: Error creating new Project record #####")
 		}
 		confirm_key := project_id + "confirm"
 		err = stub.PutState(confirm_key, []byte(bytes))
 		if err != nil {
-			return nil, errors.New("Unable to put the state for Project")
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
 		}
 
 		return nil, nil
@@ -533,7 +533,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 	// Error
 	fmt.Println("Invoke did not find function: " + function)
-	return nil, errors.New("Received unknown function for Invoke")
+	return nil, errors.New("##### OpeEx1: Received unknown function for Invoke #####")
 }
 
 //
@@ -545,7 +545,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	if function == "get_current_amount" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
-			return nil, errors.New("Query: Incorrect number of arguments passed")
+			return nil, errors.New("##### OpeEx1: Query: Incorrect number of arguments passed #####")
 		}
 
 		entity := args[0]
@@ -553,7 +553,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	} else if function == "get_project" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
-			return nil, errors.New("Query: Incorrect number of arguments passed")
+			return nil, errors.New("##### OpeEx1: Query: Incorrect number of arguments passed #####")
 		}
 
 		project_id := args[0]
@@ -561,7 +561,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	} else if function == "get_issue" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
-			return nil, errors.New("Query: Incorrect number of arguments passed")
+			return nil, errors.New("##### OpeEx1: Query: Incorrect number of arguments passed #####")
 		}
 
 		project_id := args[0]
@@ -569,7 +569,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	} else if function == "get_distribution" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
-			return nil, errors.New("Query: Incorrect number of arguments passed")
+			return nil, errors.New("##### OpeEx1: Query: Incorrect number of arguments passed #####")
 		}
 
 		project_id := args[0]
@@ -577,7 +577,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	} else if function == "get_receivable" {
 		if len(args) != 1 {
 			fmt.Printf("Incorrect number of arguments passed");
-			return nil, errors.New("Query: Incorrect number of arguments passed")
+			return nil, errors.New("##### OpeEx1: Query: Incorrect number of arguments passed #####")
 		}
 
 		project_id := args[0]
@@ -586,7 +586,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 	// Error
 	fmt.Println("Query did not find function: " + function)
-	return nil, errors.New("Received unknown function for Query")
+	return nil, errors.New("##### OpeEx1: Received unknown function for Query #####")
 }
 
 //
@@ -600,11 +600,11 @@ func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string)
 	issue_key := project_id + "issue"
 	issue_asbytes, err := stub.GetState(issue_key)
 	if err != nil {
-		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
 
 	if err = json.Unmarshal(issue_asbytes, &issue_record) ; err != nil {
-		return nil, errors.New("Error unmarshalling data "+string(issue_asbytes))
+		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(issue_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_issue): project_id = %s\n",	project_id)
 	fmt.Printf("Query (get_issue): currency = %s\n",	issue_record.Currency)
@@ -615,7 +615,7 @@ func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string)
 
 	bytes, err := json.Marshal(issue_record)
 	if err != nil {
-		return nil, errors.New("Error creating returning record")
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
 	return []byte(bytes), nil
 }
@@ -631,11 +631,11 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	project_key := project_id + "project"
 	project_asbytes, err := stub.GetState(project_key)
 	if err != nil {
-		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
 
 	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
-		return nil, errors.New("Error unmarshalling data "+string(project_asbytes))
+		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_project): project_id = %s\n",	project_id)
 	fmt.Printf("Query (get_project): project_name = %s\n",	project_record.ProjectName)
@@ -661,7 +661,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
-		return nil, errors.New("Error creating returning record")
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
 	return []byte(bytes), nil
 }
@@ -677,11 +677,11 @@ func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id 
 	distribution_key := project_id + "distribution"
 	distribution_asbytes, err := stub.GetState(distribution_key)
 	if err != nil {
-		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
 
 	if err = json.Unmarshal(distribution_asbytes, &distribution_record) ; err != nil {
-		return nil, errors.New("Error unmarshalling data "+string(distribution_asbytes))
+		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(distribution_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_distribution): project_id = %s\n",	project_id)
 	fmt.Printf("Query (get_distribution): currency = %s\n",		distribution_record.Currency)
@@ -704,7 +704,7 @@ func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id 
 
 	bytes, err := json.Marshal(distribution_record)
 	if err != nil {
-		return nil, errors.New("Error creating returning record")
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
 	return []byte(bytes), nil
 }
@@ -720,11 +720,11 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 	receivable_key := project_id + "receivable"
 	receivable_asbytes, err := stub.GetState(receivable_key)
 	if err != nil {
-		return nil, errors.New("Error: Failed to get state for project_id: " + project_id)
+		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
 
 	if err = json.Unmarshal(receivable_asbytes, &receivable_record) ; err != nil {
-		return nil, errors.New("Error unmarshalling data "+string(receivable_asbytes))
+		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(receivable_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_receivable): project_id = %s\n",		project_id)
 	fmt.Printf("Query (get_receivable): currency = %s\n",		receivable_record.Currency)
@@ -741,7 +741,7 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 
 	bytes, err := json.Marshal(receivable_record)
 	if err != nil {
-		return nil, errors.New("Error creating returning record")
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
 	return []byte(bytes), nil
 }
@@ -757,7 +757,7 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 	// Get the state from the ledger
 	AmountBytes, err := stub.GetState(entity)
 	if err != nil {
-		return nil, errors.New("Error: Failed to get state for entity: " + entity)
+		return nil, errors.New("##### OpeEx1: Failed to get state for entity: " + entity + " #####")
 	}
 
 	// Bytes to String
@@ -766,7 +766,7 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 	// String to Float64
 	Amount, err = strconv.ParseFloat(AmountStr, 64)
 	if err != nil {
-		return nil, errors.New("Expecting float value for Amount to be issued")
+		return nil, errors.New("##### OpeEx1: Expecting float value for Amount to be issued #####")
 	}
 	fmt.Printf("Query (get_receivable): entity = %s\n",	entity)
 	fmt.Printf("Query (get_receivable): amount = %f\n",	Amount)
