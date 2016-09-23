@@ -504,6 +504,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		// Get the state from the ledger
 		var project_record Project
+		project_id := args[0]
 		project_key := args[0] + "project"
 		project_asbytes, err := stub.GetState(project_key)
 		if err != nil {
