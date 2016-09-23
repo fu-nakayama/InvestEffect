@@ -99,6 +99,8 @@ type Project struct {
 // Init
 //
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+	fmt.Println("Entering into Init()")
+
 	var amount_record Amount
 
 	// making a record
@@ -155,6 +157,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 
 	// Nothing to do here, just return
+	fmt.Println("Returning from Init()")
 	return nil, nil
 }
 
@@ -162,7 +165,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 // Invoke
 //
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	fmt.Println("invoke is running " + function)
+	fmt.Println("Entering into Invoke: " + function)
 
 	if function == "issue" {			// issue //
 		// issue (ProjectId, Issueamount)
@@ -215,6 +218,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
 		}
+
+		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "project" {		// project //
 		// issue (ProjectId, ProjectName, InvestType, InvestAmount,
@@ -324,6 +329,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
 		}
+
+		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "receivable" {		// receivable //
 		// issue (ProjectId, AMCPercent, AMCAmount,
@@ -408,6 +415,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Receivable #####")
 		}
+
+		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "distribution" {		// distribution //
 		// issue (ProjectId, IssueAmount,
@@ -485,6 +494,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Distribution #####")
 		}
 
+		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "confirm" {		// project //
 		// issue (ProjectId, Entity)
@@ -494,14 +504,36 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		// Get the state from the ledger
 		var project_record Project
-		project_id := args[0]
-		project_asbytes, err := stub.GetState(project_id)
+		project_key := args[0] + "project"
+		project_asbytes, err := stub.GetState(project_key)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 		}
+
 		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
 			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 		}
+		fmt.Printf("Invoke (confirm): project_id = %s\n",	project_id)
+		fmt.Printf("Invoke (confirm): project_name = %s\n",	project_record.ProjectName)
+		fmt.Printf("Invoke (confirm): invest_type = %s\n",	project_record.InvestType)
+		fmt.Printf("Invoke (confirm): invest_amount = %f\n",	project_record.InvestAmount)
+		fmt.Printf("Invoke (confirm): amc_percent = %f\n",	project_record.AMCPercent)
+		fmt.Printf("Invoke (confirm): gcc_percent = %f\n",	project_record.GCCPercent)
+		fmt.Printf("Invoke (confirm): gmc_percent = %f\n",	project_record.GMCPercent)
+		fmt.Printf("Invoke (confirm): rbbc_percent = %f\n",	project_record.RBBCPercent)
+		fmt.Printf("Invoke (confirm): cic_percent = %f\n",	project_record.CICPercent)
+		fmt.Printf("Invoke (confirm): bk_dept = %s\n",		project_record.BKDept)
+		fmt.Printf("Invoke (confirm): bk_team = %s\n",		project_record.BKTeam)
+		fmt.Printf("Invoke (confirm): bk_person = %s\n",	project_record.BKPerson)
+		fmt.Printf("Invoke (confirm): bk_amount = %f\n",	project_record.BKAmount)
+		fmt.Printf("Invoke (confirm): sc_dept = %s\n",		project_record.SCDept)
+		fmt.Printf("Invoke (confirm): sc_team = %s\n",		project_record.SCTeam)
+		fmt.Printf("Invoke (confirm): sc_person = %s\n",	project_record.SCPerson)
+		fmt.Printf("Invoke (confirm): sc_amount = %f\n",	project_record.SCAmount)
+		fmt.Printf("Invoke (confirm): tb_dept = %s\n",		project_record.TBDept)
+		fmt.Printf("Invoke (confirm): tb_team = %s\n",		project_record.TBTeam)
+		fmt.Printf("Invoke (confirm): tb_person = %s\n",	project_record.TBPerson)
+		fmt.Printf("Invoke (confirm): tb_amount = %f\n",	project_record.TBAmount)
 
 		if args[1] == "BK" {
 			project_record.BKConfirmed = true
@@ -522,12 +554,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new Project record #####")
 		}
-		confirm_key := project_id + "confirm"
-		err = stub.PutState(confirm_key, []byte(bytes))
+		err = stub.PutState(project_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
 		}
 
+		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	}
 
@@ -540,7 +572,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 // Query callback representing the query of a chaincode
 //
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	fmt.Println("query is running " + function)
+	fmt.Println("Entering into Query: " + function)
 
 	if function == "get_current_amount" {
 		if len(args) != 1 {
@@ -549,6 +581,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		}
 
 		entity := args[0]
+		fmt.Println("Executing Query: " + function)
 		return t.get_current_amount(stub, entity)
 	} else if function == "get_project" {
 		if len(args) != 1 {
@@ -557,6 +590,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		}
 
 		project_id := args[0]
+		fmt.Println("Executing Query: " + function)
 		return t.get_project(stub, project_id)
 	} else if function == "get_issue" {
 		if len(args) != 1 {
@@ -565,6 +599,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		}
 
 		project_id := args[0]
+		fmt.Println("Executing Query: " + function)
 		return t.get_issue(stub, project_id)
 	} else if function == "get_distribution" {
 		if len(args) != 1 {
@@ -573,6 +608,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		}
 
 		project_id := args[0]
+		fmt.Println("Executing Query: " + function)
 		return t.get_distribution(stub, project_id)
 	} else if function == "get_receivable" {
 		if len(args) != 1 {
@@ -581,6 +617,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		}
 
 		project_id := args[0]
+		fmt.Println("Executing Query: " + function)
 		return t.get_receivable(stub, project_id)
 	}	
 
