@@ -497,6 +497,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "confirm" {		// project //
+		fmt.Println("Entering into confirm")
 		// issue (ProjectId, Entity)
 		if len(args) != 2 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 2 arguments for confirm #####")
@@ -506,11 +507,14 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		var project_record Project
 		project_id := args[0]
 		project_key := args[0] + "project"
+
+		fmt.Println("Calling GetState in confirm")
 		project_asbytes, err := stub.GetState(project_key)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 		}
 
+		fmt.Println("Calling Unmarshal in confirm")
 		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
 			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 		}
@@ -551,10 +555,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		   	project_record.Confirmed = true
 		}
 
+		fmt.Println("Calling Marshal in confirm")
 		bytes, err := json.Marshal(project_record)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new Project record #####")
 		}
+		fmt.Println("Calling PutState in confirm")
 		err = stub.PutState(project_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
