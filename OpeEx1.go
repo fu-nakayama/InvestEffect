@@ -169,6 +169,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 	if function == "issue" {			// issue //
 		// (ProjectId, Issueamount)
+		fmt.Println("Entering into confirm")
+
 		if len(args) != 2 {
 			return nil, errors.New("##### OpeEx1:  Incorrect number of arguments. Expecting 2 arguments for issue #####")
 		}
@@ -181,20 +183,23 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// Set Arguments to local variables
 		project_id = args[0]
 		issue_key := project_id + "issue"
+		fmt.Printf("Invoke (issue): project_id = %s\n", project_id)
 
+		fmt.Println("Calling GetState in issue")
 		issue_asbytes, err := stub.GetState(issue_key)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 		}
+		fmt.Println("Success GetState in issue")
 		if issue_asbytes != nil {
 			return nil, errors.New("##### OpeEx1: project_id: " + project_id + " has already been issued #####")
 		}
+		fmt.Println("New issue record will be added")
 
 		issue_amount, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Expecting float value for issue_amount to be issued #####")
 		}
-		fmt.Printf("Invoke (issue): project_id = %s\n", project_id)
 		fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
 
 		// Get current date and time
