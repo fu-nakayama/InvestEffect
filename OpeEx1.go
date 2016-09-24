@@ -168,7 +168,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	fmt.Println("Entering into Invoke: " + function)
 
 	if function == "issue" {			// issue //
-		// issue (ProjectId, Issueamount)
+		// (ProjectId, Issueamount)
 		if len(args) != 2 {
 			return nil, errors.New("##### OpeEx1:  Incorrect number of arguments. Expecting 2 arguments for issue #####")
 		}
@@ -222,11 +222,11 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "project" {		// project //
-		// issue (ProjectId, ProjectName, InvestType, InvestAmount,
-		//        AMCPercent, GCCPercent, GMCPercent, RBBCPercent, CICPercent,
-		//        BKDept, BKTeam, BKPerson, BKAmount,
-		//        SCDept, SCTeam, SCPerson, SCAmount,
-		//        TBDept, TBTeam, TBPerson, TBAmount)
+		// (ProjectId, ProjectName, InvestType, InvestAmount,
+		//  AMCPercent, GCCPercent, GMCPercent, RBBCPercent, CICPercent,
+		//  BKDept, BKTeam, BKPerson, BKAmount,
+		//  SCDept, SCTeam, SCPerson, SCAmount,
+		//  TBDept, TBTeam, TBPerson, TBAmount)
 		if len(args) != 21 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 21 arguments for project #####")
 		}
@@ -337,9 +337,9 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "receivable" {		// receivable //
-		// issue (ProjectId, AMCPercent, AMCAmount,
-		//        GCCPercent, GCCAmount, GMCPercent, GMCAmount,
-		//        RBBCPercent, RBBCAmount, CICPercent, CICAmount)
+		// (ProjectId, AMCPercent, AMCAmount,
+		//  GCCPercent, GCCAmount, GMCPercent, GMCAmount,
+		//  RBBCPercent, RBBCAmount, CICPercent, CICAmount)
 		if len(args) != 11 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 11 arguments for receivable #####")
 		}
@@ -423,10 +423,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "distribution" {		// distribution //
-		// issue (ProjectId, IssueAmount,
-		//        BKDept, BKTeam, BKPerson, BKAmount,
-		//        SCDept, SCTeam, SCPerson, SCAmount,
-		//        TBDept, TBTeam, TBPerson, TBAmount)
+		// (ProjectId, IssueAmount,
+		//  BKDept, BKTeam, BKPerson, BKAmount,
+		//  SCDept, SCTeam, SCPerson, SCAmount,
+		//  TBDept, TBTeam, TBPerson, TBAmount)
 		if len(args) != 14 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 14 arguments for distribution #####")
 		}
@@ -501,8 +501,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "confirm" {		// project //
+		// (ProjectId, Entity)
 		fmt.Println("Entering into confirm")
-		// issue (ProjectId, Entity)
 		if len(args) != 2 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 2 arguments for confirm #####")
 		}
