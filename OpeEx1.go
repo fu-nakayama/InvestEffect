@@ -519,7 +519,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 
 		fmt.Println("Calling Unmarshal in confirm")
-		if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
+		err = json.Unmarshal(project_asbytes, &project_record)
+		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 		}
 		fmt.Printf("Invoke (confirm): project_id = %s\n",	project_id)
@@ -658,7 +659,8 @@ func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
-	if err = json.Unmarshal(issue_asbytes, &issue_record) ; err != nil {
+	err = json.Unmarshal(issue_asbytes, &issue_record)
+	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(issue_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_issue): project_id = %s\n",	project_id)
@@ -688,11 +690,12 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
-	message := "project_id:" + project_id + " Value:" + string(project_asbytes)
-	fmt.Printf("Query (get_project): GetState = %s\n", message)
-	
-	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
+	err = json.Unmarshal(project_asbytes, &project_record)
+	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
+	}
+	if project_record != nil {
+		return nil, errors.New("##### OpeEx1: project_id: " + project_id + " was not found #####")
 	}
 	fmt.Printf("Query (get_project): project_id = %s\n",	project_id)
 	fmt.Printf("Query (get_project): project_name = %s\n",	project_record.ProjectName)
@@ -740,7 +743,8 @@ func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id 
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
-	if err = json.Unmarshal(distribution_asbytes, &distribution_record) ; err != nil {
+	err = json.Unmarshal(distribution_asbytes, &distribution_record)
+	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(distribution_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_distribution): project_id = %s\n",	project_id)
@@ -782,7 +786,8 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
-	if err = json.Unmarshal(receivable_asbytes, &receivable_record) ; err != nil {
+	err = json.Unmarshal(receivable_asbytes, &receivable_record)
+	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(receivable_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_receivable): project_id = %s\n",		project_id)
