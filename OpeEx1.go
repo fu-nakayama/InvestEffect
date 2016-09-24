@@ -169,8 +169,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 	if function == "issue" {			// issue //
 		// (ProjectId, Issueamount)
-		fmt.Println("Entering into confirm")
-
+		fmt.Println("Entering into issue")
 		if len(args) != 2 {
 			return nil, errors.New("##### OpeEx1:  Incorrect number of arguments. Expecting 2 arguments for issue #####")
 		}
@@ -240,6 +239,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		//  BKDept, BKTeam, BKPerson, BKAmount,
 		//  SCDept, SCTeam, SCPerson, SCAmount,
 		//  TBDept, TBTeam, TBPerson, TBAmount)
+		fmt.Println("Entering into project")
 		if len(args) != 21 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 21 arguments for project #####")
 		}
@@ -366,16 +366,17 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// (ProjectId, AMCPercent, AMCAmount,
 		//  GCCPercent, GCCAmount, GMCPercent, GMCAmount,
 		//  RBBCPercent, RBBCAmount, CICPercent, CICAmount)
+		fmt.Println("Entering into receivable")
 		if len(args) != 11 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 11 arguments for receivable #####")
 		}
 
 		// String to Float64
-		var project_id												string
-		var amc_percent, amc_amount, gcc_percent, gcc_amount		float64
-		var gmc_percent, gmc_amount, rbbc_percent, rbbc_amount		float64
-		var cic_percent, cic_amount									float64
-		var err														error
+		var project_id						string
+		var amc_percent, amc_amount, gcc_percent, gcc_amount	float64
+		var gmc_percent, gmc_amount, rbbc_percent, rbbc_amount	float64
+		var cic_percent, cic_amount				float64
+		var err							error
 
 		// Set Arguments to local variables
 		project_id =	args[0]
@@ -453,6 +454,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		//  BKDept, BKTeam, BKPerson, BKAmount,
 		//  SCDept, SCTeam, SCPerson, SCAmount,
 		//  TBDept, TBTeam, TBPerson, TBAmount)
+		fmt.Println("Entering into distribution")
 		if len(args) != 14 {
 			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 14 arguments for distribution #####")
 		}
@@ -763,7 +765,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 // get_distribution
 //
 func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
-	var err						error
+	var err				error
 	var distribution_record		Distribution
 
 	// Get the state from the ledger
