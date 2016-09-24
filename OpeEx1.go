@@ -239,6 +239,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		var sc_dept, sc_team, sc_person						string
 		var tb_dept, tb_team, tb_person						string
 		var bk_amount, sc_amount, tb_amount					float64
+		var bk_confirm, sc_confirm, tb_confirm					bool
 		var err			error
 
 		// Set Arguments to local variables
@@ -275,6 +276,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		bk_amount, err = strconv.ParseFloat(args[12], 64)
 		if err != nil {
 			bk_amount = 0
+			bk_confirm = true
 		}		
 		sc_dept = 	args[13]
 		sc_team = 	args[14]
@@ -282,6 +284,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		sc_amount, err = strconv.ParseFloat(args[16], 64)
 		if err != nil {
 			sc_amount = 0
+			sc_confirm = true
 		}		
 		tb_dept = 	args[17]
 		tb_team = 	args[18]
@@ -289,6 +292,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		tb_amount, err = strconv.ParseFloat(args[20], 64)
 		if err != nil {
 			tb_amount = 0
+			tb_confirm = true
 		}		
 		
 		// making a Project record
@@ -308,17 +312,17 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			BKTeam:		bk_team,
 			BKPerson:	bk_person,
 			BKAmount:	bk_amount,
-			BKConfirmed:	false,	
+			BKConfirmed:	bc_confirm,	
 			SCDept:		sc_dept,
 			SCTeam:		sc_team,
 			SCPerson:	sc_person,
 			SCAmount:	sc_amount,
-			SCConfirmed:	false,	
+			SCConfirmed:	sc_confirm,	
 			TBDept:		tb_dept,
 			TBTeam:		tb_team,
 			TBPerson:	tb_person,
 			TBAmount:	tb_amount,
-			TBConfirmed:	false,
+			TBConfirmed:	tb_confirm,
 		}
 		bytes, err := json.Marshal(project_record)
 		if err != nil {
