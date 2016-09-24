@@ -694,7 +694,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 	}
-	if project_record.project_id == nil {
+	if project_record.ProjectId == nil {
 		return nil, errors.New("##### OpeEx1: project_id: " + project_id + " was not found #####")
 	}
 	fmt.Printf("Query (get_project): project_id = %s\n",	project_id)
