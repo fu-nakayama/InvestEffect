@@ -180,6 +180,15 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		// Set Arguments to local variables
 		project_id = args[0]
+		issue_key := project_id + "issue"
+
+		issue_asbytes, err := stub.GetState(issue_key)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
+		}
+		if issue_asbytes != nil {
+			return nil, errors.New("##### OpeEx1: project_id: " + project_id + " has already been issued #####")
+		}
 
 		issue_amount, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
@@ -213,7 +222,6 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new Issue record #####")
 		}
-		issue_key := project_id + "issue"
 		err = stub.PutState(issue_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
@@ -516,6 +524,9 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		project_asbytes, err := stub.GetState(project_key)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
+		}
+		if project_asbytes == nil {
+			return nil, errors.New("##### OpeEx1: project_id: " + project_id + " was not found #####")
 		}
 
 		fmt.Println("Calling Unmarshal in confirm")
