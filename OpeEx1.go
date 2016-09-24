@@ -180,7 +180,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		var project_id		string
 		var err			error
 
-		// Set Arguments to local variables
+		// Check if the issue has already been registered
 		project_id = args[0]
 		issue_key := project_id + "issue"
 		fmt.Printf("Invoke (issue): project_id = %s\n", project_id)
@@ -191,46 +191,46 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 		}
 		fmt.Println("Success GetState in issue")
-		if issue_asbytes == nil {
-			fmt.Println("New issue record will be added")
+		if issue_asbytes != nil {
+			return nil, errors.New("##### OpeEx1: key: " + issue_key + " has already been registered #####")
+		}
+		fmt.Println("New issue record will be added")
 
-			issue_amount, err = strconv.ParseFloat(args[1], 64)
-			if err != nil {
-				return nil, errors.New("##### OpeEx1: Expecting float value for issue_amount to be issued #####")
-			}
-			fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
+		// Set Arguments to local variables
+		issue_amount, err = strconv.ParseFloat(args[1], 64)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Expecting float value for issue_amount to be issued #####")
+		}
+		fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
 
-			// Get current date and time
-			t := time.Now()
+		// Get current date and time
+		t := time.Now()
 
-			// making a Issue record
-			var year	uint16
-			var month 	uint8
-			year =		uint16(t.Year())
-			month =		uint8(t.Month())
-			if month < 4 {
-				year = year + 1
-			}
+		// making a Issue record
+		var year	uint16
+		var month 	uint8
+		year =		uint16(t.Year())
+		month =		uint8(t.Month())
+		if month < 4 {
+			year = year + 1
+		}
 		
-			var issue_record Issue
-			issue_record = Issue {
-				ProjectId:	project_id,
-				Currency:	"JPY",
-				IssueRate:	1,
-				IssueAmount:	issue_amount,
-				Issuer:		"FG",
-				IssueYear:	year,
-			}
-			bytes, err := json.Marshal(issue_record)
-			if err != nil {
-				return nil, errors.New("##### OpeEx1: Error creating new Issue record #####")
-			}
-			err = stub.PutState(issue_key, []byte(bytes))
-			if err != nil {
-				return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
-			}
-		} else {
-			return nil, errors.New("##### OpeEx1: project_id: " + project_id + " has already been issued #####")
+		var issue_record Issue
+		issue_record = Issue {
+			ProjectId:	project_id,
+			Currency:	"JPY",
+			IssueRate:	1,
+			IssueAmount:	issue_amount,
+			Issuer:		"FG",
+			IssueYear:	year,
+		}
+		bytes, err := json.Marshal(issue_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error creating new Issue record #####")
+		}
+		err = stub.PutState(issue_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
 		}
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
@@ -255,8 +255,22 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		var bk_confirmed, sc_confirmed, tb_confirmed				bool
 		var err			error
 
-		// Set Arguments to local variables
+		// Check if the project has already been registered
 		project_id =	args[0]
+		project_key := project_id + "project"
+		
+		fmt.Println("Calling GetState in project")
+		project_asbytes, err := stub.GetState(project_key)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
+		}
+		fmt.Println("Success GetState in project")
+		if project_asbytes != nil {
+			return nil, errors.New("##### OpeEx1: key: " + project_key + " has already been registered #####")
+		}
+		fmt.Println("New project record will be added")
+		
+		// Set Arguments to local variables
 		project_name = 	args[1]
 		invest_type = 	args[2]
 		invest_amount, err = strconv.ParseFloat(args[3], 64)
@@ -341,7 +355,6 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error on creating new Project record #####")
 		}
-		project_key := project_id + "project"
 		err = stub.PutState(project_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
