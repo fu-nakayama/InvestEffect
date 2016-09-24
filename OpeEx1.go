@@ -688,6 +688,9 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
+	message := "project_id:" + project_id + " Value:" + string(project_asbytes)
+	fmt.Printf("Query (get_project): GetState = %s\n", message)
+	
 	if err = json.Unmarshal(project_asbytes, &project_record) ; err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
 	}
