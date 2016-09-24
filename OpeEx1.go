@@ -689,7 +689,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 	}
-	if project_asbytes == nill {
+	if project_asbytes == nil {
 		return nil, errors.New("##### OpeEx1: Project not found: " + project_key + " #####")
 	}
 
