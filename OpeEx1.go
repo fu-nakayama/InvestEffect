@@ -239,7 +239,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		var sc_dept, sc_team, sc_person						string
 		var tb_dept, tb_team, tb_person						string
 		var bk_amount, sc_amount, tb_amount					float64
-		var bk_confirm, sc_confirm, tb_confirm					bool
+		var bk_confirmed, sc_confirmed, tb_confirmed				bool
 		var err			error
 
 		// Set Arguments to local variables
@@ -276,7 +276,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		bk_amount, err = strconv.ParseFloat(args[12], 64)
 		if err != nil {
 			bk_amount = 0
-			bk_confirm = true
+			bk_confirmed = true
 		}		
 		sc_dept = 	args[13]
 		sc_team = 	args[14]
@@ -284,7 +284,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		sc_amount, err = strconv.ParseFloat(args[16], 64)
 		if err != nil {
 			sc_amount = 0
-			sc_confirm = true
+			sc_confirmed = true
 		}		
 		tb_dept = 	args[17]
 		tb_team = 	args[18]
@@ -292,7 +292,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		tb_amount, err = strconv.ParseFloat(args[20], 64)
 		if err != nil {
 			tb_amount = 0
-			tb_confirm = true
+			tb_confirmed = true
 		}		
 		
 		// making a Project record
@@ -312,17 +312,17 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			BKTeam:		bk_team,
 			BKPerson:	bk_person,
 			BKAmount:	bk_amount,
-			BKConfirmed:	bk_confirm,	
+			BKConfirmed:	bk_confirmed,	
 			SCDept:		sc_dept,
 			SCTeam:		sc_team,
 			SCPerson:	sc_person,
 			SCAmount:	sc_amount,
-			SCConfirmed:	sc_confirm,	
+			SCConfirmed:	sc_confirmed,	
 			TBDept:		tb_dept,
 			TBTeam:		tb_team,
 			TBPerson:	tb_person,
 			TBAmount:	tb_amount,
-			TBConfirmed:	tb_confirm,
+			TBConfirmed:	tb_confirmed,
 		}
 		bytes, err := json.Marshal(project_record)
 		if err != nil {
@@ -524,6 +524,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		fmt.Printf("Invoke (confirm): project_id = %s\n",	project_id)
 		fmt.Printf("Invoke (confirm): project_name = %s\n",	project_record.ProjectName)
+		fmt.Printf("Invoke (confirm): confirmed = %t\n",	project_record.Confirmed)
 		fmt.Printf("Invoke (confirm): invest_type = %s\n",	project_record.InvestType)
 		fmt.Printf("Invoke (confirm): invest_amount = %f\n",	project_record.InvestAmount)
 		fmt.Printf("Invoke (confirm): amc_percent = %f\n",	project_record.AMCPercent)
@@ -535,21 +536,27 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (confirm): bk_team = %s\n",		project_record.BKTeam)
 		fmt.Printf("Invoke (confirm): bk_person = %s\n",	project_record.BKPerson)
 		fmt.Printf("Invoke (confirm): bk_amount = %f\n",	project_record.BKAmount)
+		fmt.Printf("Invoke (confirm): bk_confirmed = %t\n",	project_record.BKConfirmed)
 		fmt.Printf("Invoke (confirm): sc_dept = %s\n",		project_record.SCDept)
 		fmt.Printf("Invoke (confirm): sc_team = %s\n",		project_record.SCTeam)
 		fmt.Printf("Invoke (confirm): sc_person = %s\n",	project_record.SCPerson)
 		fmt.Printf("Invoke (confirm): sc_amount = %f\n",	project_record.SCAmount)
+		fmt.Printf("Invoke (confirm): sc_confirmed = %t\n",	project_record.SCConfirmed)
 		fmt.Printf("Invoke (confirm): tb_dept = %s\n",		project_record.TBDept)
 		fmt.Printf("Invoke (confirm): tb_team = %s\n",		project_record.TBTeam)
 		fmt.Printf("Invoke (confirm): tb_person = %s\n",	project_record.TBPerson)
 		fmt.Printf("Invoke (confirm): tb_amount = %f\n",	project_record.TBAmount)
+		fmt.Printf("Invoke (confirm): tb_confirmed = %t\n",	project_record.TBConfirmed)
 
 		if args[1] == "BK" {
 			project_record.BKConfirmed = true
+			fmt.Printf("Invoke (confirm): project_id: %s (BK) has been confirmed\n", project_id)
 		} else if args[1] == "SC" {
 			project_record.SCConfirmed = true
+			fmt.Printf("Invoke (confirm): project_id: %s (SC) has been confirmed\n", project_id)
 		} else if args[1] == "TB" {
 			project_record.TBConfirmed = true
+			fmt.Printf("Invoke (confirm): project_id: %s (TB) has been confirmed\n", project_id)
 		} else {
 			return nil, errors.New("##### OpeEx1: Expecting entity name to be confirmed #####")
 		}
@@ -557,6 +564,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		   project_record.SCConfirmed == true &&
 		   project_record.TBConfirmed == true {
 		   	project_record.Confirmed = true
+			fmt.Printf("Invoke (confirm): project_id: %s has been confirmed\n", project_id)
 		}
 
 		fmt.Println("Calling Marshal in confirm")
@@ -687,6 +695,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	}
 	fmt.Printf("Query (get_project): project_id = %s\n",	project_id)
 	fmt.Printf("Query (get_project): project_name = %s\n",	project_record.ProjectName)
+	fmt.Printf("Query (get_project): confirmed = %t\n",	project_record.Confirmed)
 	fmt.Printf("Query (get_project): invest_type = %s\n",	project_record.InvestType)
 	fmt.Printf("Query (get_project): invest_amount = %f\n",	project_record.InvestAmount)
 	fmt.Printf("Query (get_project): amc_percent = %f\n",	project_record.AMCPercent)
@@ -698,14 +707,17 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	fmt.Printf("Query (get_project): bk_team = %s\n",	project_record.BKTeam)
 	fmt.Printf("Query (get_project): bk_person = %s\n",	project_record.BKPerson)
 	fmt.Printf("Query (get_project): bk_amount = %f\n",	project_record.BKAmount)
+	fmt.Printf("Query (get_project): bk_confirmed = %t\n",	project_record.BKConfirmed)
 	fmt.Printf("Query (get_project): sc_dept = %s\n",	project_record.SCDept)
 	fmt.Printf("Query (get_project): sc_team = %s\n",	project_record.SCTeam)
 	fmt.Printf("Query (get_project): sc_person = %s\n",	project_record.SCPerson)
 	fmt.Printf("Query (get_project): sc_amount = %f\n",	project_record.SCAmount)
+	fmt.Printf("Query (get_project): sc_confirmed = %t\n",	project_record.SCConfirmed)
 	fmt.Printf("Query (get_project): tb_dept = %s\n",	project_record.TBDept)
 	fmt.Printf("Query (get_project): tb_team = %s\n",	project_record.TBTeam)
 	fmt.Printf("Query (get_project): tb_person = %s\n",	project_record.TBPerson)
 	fmt.Printf("Query (get_project): tb_amount = %f\n",	project_record.TBAmount)
+	fmt.Printf("Query (get_project): tb_confirmed = %t\n",	project_record.TBConfirmed)
 
 	bytes, err := json.Marshal(project_record)
 	if err != nil {
