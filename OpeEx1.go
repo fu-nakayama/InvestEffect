@@ -191,47 +191,47 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
 		}
 		fmt.Println("Success GetState in issue")
-		if issue_asbytes != nil {
+		if issue_asbytes == nil {
+			fmt.Println("New issue record will be added")
+
+			issue_amount, err = strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return nil, errors.New("##### OpeEx1: Expecting float value for issue_amount to be issued #####")
+			}
+			fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
+
+			// Get current date and time
+			t := time.Now()
+
+			// making a Issue record
+			var year	uint16
+			var month 	uint8
+			year =		uint16(t.Year())
+			month =		uint8(t.Month())
+			if month < 4 {
+				year = year + 1
+			}
+		
+			var issue_record Issue
+			issue_record = Issue {
+				ProjectId:	project_id,
+				Currency:	"JPY",
+				IssueRate:	1,
+				IssueAmount:	issue_amount,
+				Issuer:		"FG",
+				IssueYear:	year,
+			}
+			bytes, err := json.Marshal(issue_record)
+			if err != nil {
+				return nil, errors.New("##### OpeEx1: Error creating new Issue record #####")
+			}
+			err = stub.PutState(issue_key, []byte(bytes))
+			if err != nil {
+				return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
+			}
+		} else {
 			return nil, errors.New("##### OpeEx1: project_id: " + project_id + " has already been issued #####")
 		}
-		fmt.Println("New issue record will be added")
-
-		issue_amount, err = strconv.ParseFloat(args[1], 64)
-		if err != nil {
-			return nil, errors.New("##### OpeEx1: Expecting float value for issue_amount to be issued #####")
-		}
-		fmt.Printf("Invoke (issue): issue_amount = %f\n", issue_amount)
-
-		// Get current date and time
-		t := time.Now()
-
-		// making a Issue record
-		var year	uint16
-		var month 	uint8
-		year =		uint16(t.Year())
-		month =		uint8(t.Month())
-		if month < 4 {
-			year = year + 1
-		}
-		
-		var issue_record Issue
-		issue_record = Issue {
-			ProjectId:	project_id,
-			Currency:	"JPY",
-			IssueRate:	1,
-			IssueAmount:	issue_amount,
-			Issuer:		"FG",
-			IssueYear:	year,
-		}
-		bytes, err := json.Marshal(issue_record)
-		if err != nil {
-			return nil, errors.New("##### OpeEx1: Error creating new Issue record #####")
-		}
-		err = stub.PutState(issue_key, []byte(bytes))
-		if err != nil {
-			return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
-		}
-
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "project" {		// project //
