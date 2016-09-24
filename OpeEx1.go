@@ -312,7 +312,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 			BKTeam:		bk_team,
 			BKPerson:	bk_person,
 			BKAmount:	bk_amount,
-			BKConfirmed:	bc_confirm,	
+			BKConfirmed:	bk_confirm,	
 			SCDept:		sc_dept,
 			SCTeam:		sc_team,
 			SCPerson:	sc_person,
