@@ -97,8 +97,21 @@ type Project struct {
 }
 
 type ProjectSet struct{
-	Projects	[]Project `json:"projects"`
+	Projects	[]Project	`json:"projects"`
 }
+
+type IssueSet struct{
+	Issues		[]Issue		`json:"issues"`
+}
+
+type DistributionSet struct{
+	Distributions	[]Distribution	`json:"distributions"`
+}
+
+type ReceivableSet struct{
+	Receivables	[]Receivable	`json:"receivables"`
+}
+
 //
 // Init
 //
@@ -682,15 +695,15 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	} else if function == "get_all_project" {
 		fmt.Println("Executing Query: " + function)
 		return t.get_all_project(stub)
-//	} else if function == "get_all_issue" {
-//		fmt.Println("Executing Query: " + function)
-//		return t.get_all_issue(stub)
-//	} else if function == "get_all_distribution" {
-//		fmt.Println("Executing Query: " + function)
-//		return t.get_all_distribution(stub)
-//	} else if function == "get_all_receivable" {
-//		fmt.Println("Executing Query: " + function)
-//		return t.get_all_receivable(stub)
+	} else if function == "get_all_issue" {
+		fmt.Println("Executing Query: " + function)
+		return t.get_all_issue(stub)
+	} else if function == "get_all_distribution" {
+		fmt.Println("Executing Query: " + function)
+		return t.get_all_distribution(stub)
+	} else if function == "get_all_receivable" {
+		fmt.Println("Executing Query: " + function)
+		return t.get_all_receivable(stub)
 	}	
 
 	// Error
@@ -702,6 +715,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 // get username
 //
 func (t *SimpleChaincode) get_username(stub *shim.ChaincodeStub) (string, error) {
+	fmt.Println("Entering into get_username")
 	bytes, err := stub.GetCallerCertificate();
 	if err != nil {
 		return "", errors.New("Couldn't retrieve caller certificate")
@@ -711,6 +725,7 @@ func (t *SimpleChaincode) get_username(stub *shim.ChaincodeStub) (string, error)
 		return "", errors.New("Couldn't parse certificate")
 	}
 															
+	fmt.Println("Returning from get_username")
 	return x509Cert.Subject.CommonName, nil
 }
 
@@ -718,6 +733,7 @@ func (t *SimpleChaincode) get_username(stub *shim.ChaincodeStub) (string, error)
 // get_issue
 //
 func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	fmt.Println("Entering into get_issue")
 	var err			error
 	var issue_record	Issue
 
@@ -742,6 +758,7 @@ func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
+	fmt.Println("Returning from get_issue")
 	return []byte(bytes), nil
 }
 
@@ -749,6 +766,7 @@ func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string)
 // get_project
 //
 func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	fmt.Println("Entering into get_project")
 	var err			error
 	var project_record	Project
 
@@ -795,6 +813,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
+	fmt.Println("Returning from get_project")
 	return []byte(bytes), nil
 }
 
@@ -802,6 +821,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 // get_distribution
 //
 func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	fmt.Println("Entering into get_distribution")
 	var err				error
 	var distribution_record		Distribution
 
@@ -838,6 +858,7 @@ func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id 
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
+	fmt.Println("Returning from get_distribution")
 	return []byte(bytes), nil
 }
 
@@ -845,6 +866,7 @@ func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id 
 // get_receivable
 //
 func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id string) ([]byte, error) {
+	fmt.Println("Entering into get_receivable")
 	var err			error
 	var receivable_record	Receivable
 
@@ -875,6 +897,7 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
+	fmt.Println("Returning from get_receivable")
 	return []byte(bytes), nil
 }
 
@@ -882,6 +905,7 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 // get_current_amount
 //
 func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity string) ([]byte, error) {
+	fmt.Println("Entering into get_current_amount")
 	var err		error
 	var AmountStr	string
 	var Amount	float64
@@ -900,16 +924,18 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Expecting float value for Amount to be issued #####")
 	}
-	fmt.Printf("Query (get_receivable): entity = %s\n",	entity)
-	fmt.Printf("Query (get_receivable): amount = %f\n",	Amount)
+	fmt.Printf("Query (get_current_amount): entity = %s\n",	entity)
+	fmt.Printf("Query (get_current_amount): amount = %f\n",	Amount)
 
+	fmt.Println("Returning from get_current_amount")
 	return []byte(AmountStr), nil
 }
 
 //
-// get_project
+// get_all_project
 //
 func (t *SimpleChaincode) get_all_project(stub *shim.ChaincodeStub) ([]byte, error) {
+	fmt.Println("Entering into get_all_project")
 	var err			error
 	var project_record	Project
 	var project_set		ProjectSet
@@ -934,6 +960,106 @@ func (t *SimpleChaincode) get_all_project(stub *shim.ChaincodeStub) ([]byte, err
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
+	fmt.Println("Returning from get_all_project")
+	return []byte(bytes), nil
+}
+
+//
+// get_all_issue
+//
+func (t *SimpleChaincode) get_all_issue(stub *shim.ChaincodeStub) ([]byte, error) {
+	fmt.Println("Entering into get_all_issue")
+	var err			error
+	var issue_record	Issue
+	var issue_set		IssueSet
+
+	iter, err := stub.RangeQueryState("", "~")
+	if err != nil {
+		return nil, errors.New("Unable to start the iterator")
+	}
+	defer iter.Close()
+	for iter.HasNext() {
+		_, issue_asbytes, iterErr := iter.Next()
+		if iterErr != nil {
+			return nil, errors.New("keys operation failed. Error accessing next state")
+		}
+		err = json.Unmarshal(issue_asbytes, &issue_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(issue_asbytes) + " #####")
+		}
+		issue_set.Issues = append(issue_set.Issues, issue_record)
+	}
+	bytes, err := json.Marshal(issue_set.Issues)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
+	}
+	fmt.Println("Returning from get_all_issue")
+	return []byte(bytes), nil
+}
+
+//
+// get_all_distribution
+//
+func (t *SimpleChaincode) get_all_distribution(stub *shim.ChaincodeStub) ([]byte, error) {
+	fmt.Println("Entering into get_all_distribution")
+	var err				error
+	var distribution_record		Distribution
+	var distribution_set		DistributionSet
+
+	iter, err := stub.RangeQueryState("", "~")
+	if err != nil {
+		return nil, errors.New("Unable to start the iterator")
+	}
+	defer iter.Close()
+	for iter.HasNext() {
+		_, distribution_asbytes, iterErr := iter.Next()
+		if iterErr != nil {
+			return nil, errors.New("keys operation failed. Error accessing next state")
+		}
+		err = json.Unmarshal(distribution_asbytes, &distribution_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(distribution_asbytes) + " #####")
+		}
+		distribution_set.Distributions = append(distribution_set.Distributions, distribution_record)
+	}
+	bytes, err := json.Marshal(distribution_set.Distributions)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
+	}
+	fmt.Println("Returning from get_all_distribution")
+	return []byte(bytes), nil
+}
+
+//
+// get_all_receivable
+//
+func (t *SimpleChaincode) get_all_receivable(stub *shim.ChaincodeStub) ([]byte, error) {
+	fmt.Println("Entering into get_all_receivable")
+	var err				error
+	var receivable_record		Receivable
+	var receivable_set		ReceivableSet
+
+	iter, err := stub.RangeQueryState("", "~")
+	if err != nil {
+		return nil, errors.New("Unable to start the iterator")
+	}
+	defer iter.Close()
+	for iter.HasNext() {
+		_, receivable_asbytes, iterErr := iter.Next()
+		if iterErr != nil {
+			return nil, errors.New("keys operation failed. Error accessing next state")
+		}
+		err = json.Unmarshal(receivable_asbytes, &receivable_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(receivable_asbytes) + " #####")
+		}
+		receivable_set.Receivables = append(receivable_set.Receivables, receivable_record)
+	}
+	bytes, err := json.Marshal(receivable_set.Receivables)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
+	}
+	fmt.Println("Returning from get_all_receivable")
 	return []byte(bytes), nil
 }
 
