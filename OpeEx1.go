@@ -203,7 +203,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		// Check if the issue has already been registered
 		project_id = args[0]
-		issue_key := project_id + "issue"
+		issue_key :=  "issue/" + project_id
 		fmt.Printf("Invoke (issue): project_id = %s\n", project_id)
 
 		fmt.Println("Calling GetState in issue")
@@ -279,7 +279,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		// Check if the project has already been registered
 		project_id =	args[0]
-		project_key := project_id + "project"
+		project_key := "project/" + project_id 
 		
 		fmt.Println("Calling GetState in project")
 		project_asbytes, err := stub.GetState(project_key)
@@ -463,7 +463,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error on creating new Receivable record #####")
 		}
-		receivable_key := project_id + "receivable"
+		receivable_key := "receivable/" + project_id 
 		err = stub.PutState(receivable_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Receivable #####")
@@ -542,7 +542,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error on creating new Distribution record #####")
 		}
-		distribution_key := project_id + "distribution"
+		distribution_key := "distribution/" + project_id 
 		err = stub.PutState(distribution_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Distribution #####")
@@ -560,7 +560,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// Get the state from the ledger
 		var project_record Project
 		project_id := args[0]
-		project_key := args[0] + "project"
+		project_key := "project/" + args[0]
 
 		fmt.Println("Calling GetState in confirm")
 		project_asbytes, err := stub.GetState(project_key)
@@ -738,7 +738,7 @@ func (t *SimpleChaincode) get_issue(stub *shim.ChaincodeStub, project_id string)
 	var issue_record	Issue
 
 	// Get the state from the ledger
-	issue_key := project_id + "issue"
+	issue_key := "issue/" + project_id
 	issue_asbytes, err := stub.GetState(issue_key)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
@@ -771,7 +771,7 @@ func (t *SimpleChaincode) get_project(stub *shim.ChaincodeStub, project_id strin
 	var project_record	Project
 
 	// Get the state from the ledger
-	project_key := project_id + "project"
+	project_key := "project/" + project_id
 	project_asbytes, err := stub.GetState(project_key)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
@@ -826,7 +826,7 @@ func (t *SimpleChaincode) get_distribution(stub *shim.ChaincodeStub, project_id 
 	var distribution_record		Distribution
 
 	// Get the state from the ledger
-	distribution_key := project_id + "distribution"
+	distribution_key := "distribution/" + project_id
 	distribution_asbytes, err := stub.GetState(distribution_key)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
@@ -871,7 +871,7 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 	var receivable_record	Receivable
 
 	// Get the state from the ledger
-	receivable_key := project_id + "receivable"
+	receivable_key := "receivable/" + project_id
 	receivable_asbytes, err := stub.GetState(receivable_key)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
@@ -940,7 +940,7 @@ func (t *SimpleChaincode) get_all_project(stub *shim.ChaincodeStub) ([]byte, err
 	var project_record	Project
 	var project_set		ProjectSet
 
-	iter, err := stub.RangeQueryState("", "~")
+	iter, err := stub.RangeQueryState("project/", "project/~")
 	if err != nil {
 		return nil, errors.New("Unable to start the iterator")
 	}
@@ -973,7 +973,7 @@ func (t *SimpleChaincode) get_all_issue(stub *shim.ChaincodeStub) ([]byte, error
 	var issue_record	Issue
 	var issue_set		IssueSet
 
-	iter, err := stub.RangeQueryState("", "~")
+	iter, err := stub.RangeQueryState("issue/", "issue/~")
 	if err != nil {
 		return nil, errors.New("Unable to start the iterator")
 	}
@@ -1006,7 +1006,7 @@ func (t *SimpleChaincode) get_all_distribution(stub *shim.ChaincodeStub) ([]byte
 	var distribution_record		Distribution
 	var distribution_set		DistributionSet
 
-	iter, err := stub.RangeQueryState("", "~")
+	iter, err := stub.RangeQueryState("distribution/", "distribution/~")
 	if err != nil {
 		return nil, errors.New("Unable to start the iterator")
 	}
@@ -1039,7 +1039,7 @@ func (t *SimpleChaincode) get_all_receivable(stub *shim.ChaincodeStub) ([]byte, 
 	var receivable_record		Receivable
 	var receivable_set		ReceivableSet
 
-	iter, err := stub.RangeQueryState("", "~")
+	iter, err := stub.RangeQueryState("receivable/", "receivable/~")
 	if err != nil {
 		return nil, errors.New("Unable to start the iterator")
 	}
