@@ -96,6 +96,9 @@ type Project struct {
 	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false
 }
 
+type ProjectSet struct{
+	Projects	[]Project `json:"projects"`
+}
 //
 // Init
 //
@@ -676,6 +679,18 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		project_id := args[0]
 		fmt.Println("Executing Query: " + function)
 		return t.get_receivable(stub, project_id)
+	} else if function == "get_all_project" {
+		fmt.Println("Executing Query: " + function)
+		return t.get_all_project(stub)
+//	} else if function == "get_all_issue" {
+//		fmt.Println("Executing Query: " + function)
+//		return t.get_all_issue(stub)
+//	} else if function == "get_all_distribution" {
+//		fmt.Println("Executing Query: " + function)
+//		return t.get_all_distribution(stub)
+//	} else if function == "get_all_receivable" {
+//		fmt.Println("Executing Query: " + function)
+//		return t.get_all_receivable(stub)
 	}	
 
 	// Error
@@ -889,6 +904,37 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 	fmt.Printf("Query (get_receivable): amount = %f\n",	Amount)
 
 	return []byte(AmountStr), nil
+}
+
+//
+// get_project
+//
+func (t *SimpleChaincode) get_all_project(stub *shim.ChaincodeStub) ([]byte, error) {
+	var err			error
+	var project_record	Project
+	var project_set		ProjectSet
+
+	iter, err := stub.RangeQueryState("", "~")
+	if err != nil {
+		return nil, errors.New("Unable to start the iterator")
+	}
+	defer iter.Close()
+	for iter.HasNext() {
+		_, project_asbytes, iterErr := iter.Next()
+		if iterErr != nil {
+			return nil, errors.New("keys operation failed. Error accessing next state")
+		}
+		err = json.Unmarshal(project_asbytes, &project_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(project_asbytes) + " #####")
+		}
+		project_set.Projects = append(project_set.Projects, project_record)
+	}
+	bytes, err := json.Marshal(project_set.Projects)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
+	}
+	return []byte(bytes), nil
 }
 
 //
