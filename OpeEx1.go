@@ -166,7 +166,9 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 //
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("Entering into Invoke: " + function)
-
+	user, err := t.get_username(stub)
+	fmt.Println("Invoke function called by : " + user)
+	
 	if function == "issue" {			// issue //
 		// (ProjectId, Issueamount)
 		fmt.Println("Entering into issue")
@@ -675,6 +677,22 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	// Error
 	fmt.Println("Query did not find function: " + function)
 	return nil, errors.New("##### OpeEx1: Received unknown function for Query #####")
+}
+
+//
+// get username
+//
+func (t *SimpleChaincode) get_username(stub *shim.ChaincodeStub) (string, error) {
+	bytes, err := stub.GetCallerCertificate();
+	if err != nil {
+		return "", errors.New("Couldn't retrieve caller certificate")
+	}
+	x509Cert, err := x509.ParseCertificate(bytes);		// Extract Certificate from result of GetCallerCertificate						
+	if err != nil {
+		return "", errors.New("Couldn't parse certificate")
+	}
+															
+	return x509Cert.Subject.CommonName, nil
 }
 
 //
