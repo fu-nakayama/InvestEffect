@@ -7,6 +7,7 @@ import (
 	"time"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"encoding/json"
+	"crypto/x509"
 )
 
 // SimpleChaincode example simple Chaincode implementation
