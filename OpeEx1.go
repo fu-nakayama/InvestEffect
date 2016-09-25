@@ -170,7 +170,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	fmt.Println("Entering into Invoke: " + function)
 	user, err := t.get_username(stub)
 	if err != nil {
-		return nil, errors.New("##### OpeEx1: Failed to get username for project_id: " + project_id + " #####")
+		return nil, errors.New("##### OpeEx1: Failed to get username for function: " + function + " #####")
 	}
 	fmt.Println("Invoke function called by : " + user)
 	
