@@ -166,8 +166,12 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 // Invoke
 //
 func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
+	var err		error
 	fmt.Println("Entering into Invoke: " + function)
 	user, err := t.get_username(stub)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Failed to get username for project_id: " + project_id + " #####")
+	}
 	fmt.Println("Invoke function called by : " + user)
 	
 	if function == "issue" {			// issue //
@@ -180,7 +184,6 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// String to Float64
 		var issue_amount	float64
 		var project_id		string
-		var err			error
 
 		// Check if the issue has already been registered
 		project_id = args[0]
