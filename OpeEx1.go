@@ -412,6 +412,135 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
+	} else if function == "updateproject" {		// updateproject //
+		// (ProjectId, ProjectName, InvestType, InvestAmount,
+		//  AMCPercent, GCCPercent, GMCPercent, RBBCPercent, CICPercent,
+		//  BKDept, BKTeam, BKPerson, BKAmount,
+		//  SCDept, SCTeam, SCPerson, SCAmount,
+		//  TBDept, TBTeam, TBPerson, TBAmount)
+		fmt.Println("Entering into updateproject, forcibly update project")
+		if len(args) != 21 {
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 21 arguments for project #####")
+		}
+
+		// String to Float64
+		var project_id, project_name, invest_type				string
+		var invest_amount							float64
+		var amc_percent, gcc_percent, gmc_percent, rbbc_percent, cic_percent	float64
+		var bk_dept, bk_team, bk_person						string
+		var sc_dept, sc_team, sc_person						string
+		var tb_dept, tb_team, tb_person						string
+		var bk_amount, sc_amount, tb_amount					float64
+		var bk_confirmed, sc_confirmed, tb_confirmed				bool
+		var err			error
+
+		// Check if the project has already been registered
+		project_id =	args[0]
+		project_key := "project/" + project_id 
+		
+		fmt.Println("Calling GetState in project")
+		project_asbytes, err := stub.GetState(project_key)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Failed to get state for project_id: " + project_id + " #####")
+		}
+		fmt.Println("Success GetState in project")
+		if project_asbytes == nil {
+			return nil, errors.New("##### OpeEx1: key: " + project_key + " has not been registered #####")
+		}
+		fmt.Println("Project record will be override")
+		
+		// Set Arguments to local variables
+		project_name = 	args[1]
+		invest_type = 	args[2]
+		invest_amount, err = strconv.ParseFloat(args[3], 64)
+		if err != nil {
+			invest_amount = 0
+		}
+		amc_percent, err = strconv.ParseFloat(args[4], 64)
+		if err != nil {
+			amc_percent = 0
+		}
+		gcc_percent, err = strconv.ParseFloat(args[5], 64)
+		if err != nil {
+			gcc_percent = 0
+		}
+		gmc_percent, err = strconv.ParseFloat(args[6], 64)
+		if err != nil {
+			gmc_percent = 0
+		}
+		rbbc_percent, err = strconv.ParseFloat(args[7], 64)
+		if err != nil {
+			rbbc_percent = 0
+		}
+		cic_percent, err = strconv.ParseFloat(args[8], 64)
+		if err != nil {
+			cic_percent = 0
+		}
+		bk_dept = 	args[9]
+		bk_team = 	args[10]
+		bk_person = 	args[11]
+		bk_amount, err = strconv.ParseFloat(args[12], 64)
+		if err != nil {
+			bk_amount = 0
+			bk_confirmed = true
+		}		
+		sc_dept = 	args[13]
+		sc_team = 	args[14]
+		sc_person = 	args[15]
+		sc_amount, err = strconv.ParseFloat(args[16], 64)
+		if err != nil {
+			sc_amount = 0
+			sc_confirmed = true
+		}		
+		tb_dept = 	args[17]
+		tb_team = 	args[18]
+		tb_person = 	args[19]
+		tb_amount, err = strconv.ParseFloat(args[20], 64)
+		if err != nil {
+			tb_amount = 0
+			tb_confirmed = true
+		}		
+		
+		// making a Project record
+		var project_record Project
+		project_record = Project {
+			ProjectId:	project_id,
+			ProjectName:	project_name,
+			InvestType:	invest_type,
+			InvestAmount:	invest_amount,
+			Confirmed:	false,
+			AMCPercent:	amc_percent,
+			GCCPercent:	gcc_percent,
+			GMCPercent:	gmc_percent,
+			RBBCPercent:	rbbc_percent,
+			CICPercent:	cic_percent,
+			BKDept:		bk_dept,
+			BKTeam:		bk_team,
+			BKPerson:	bk_person,
+			BKAmount:	bk_amount,
+			BKConfirmed:	bk_confirmed,	
+			SCDept:		sc_dept,
+			SCTeam:		sc_team,
+			SCPerson:	sc_person,
+			SCAmount:	sc_amount,
+			SCConfirmed:	sc_confirmed,	
+			TBDept:		tb_dept,
+			TBTeam:		tb_team,
+			TBPerson:	tb_person,
+			TBAmount:	tb_amount,
+			TBConfirmed:	tb_confirmed,
+		}
+		bytes, err := json.Marshal(project_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error on creating new Project record #####")
+		}
+		err = stub.PutState(project_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
+		}
+
+		fmt.Println("Returning from Invoke: " + function)
+		return nil, nil
 	} else if function == "receivable" {		// receivable //
 		// (ProjectId, AMCPercent, AMCAmount,
 		//  GCCPercent, GCCAmount, GMCPercent, GMCAmount,
