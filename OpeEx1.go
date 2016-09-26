@@ -14,7 +14,7 @@ import (
 type SimpleChaincode struct {
 }
 
-// Current amount
+// Record of current amount
 type Amount struct {
 	Entity		string	`json:"entity"`		// "FG" | BK" | "SC" | "TB"
 	Amount		float64	`json:"amount"`
@@ -272,7 +272,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (issue): new_amount for FG = %f\n", amount_record.Amount)
 
 		// update amount_record
-		bytes, err := json.Marshal(amount_record)
+		bytes, err = json.Marshal(amount_record)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new record #####")
 		}
@@ -678,7 +678,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (confirm): new_amount for %s = %f\n", entity, amount_record.Amount)
 
 		// update amount_record
-		bytes, err := json.Marshal(amount_record)
+		bytes, err = json.Marshal(amount_record)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new record #####")
 		}
@@ -703,7 +703,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (confirm): new_amount for FG = %f\n", entity, amount_record.Amount)
 
 		// update amount_record
-		bytes, err := json.Marshal(amount_record)
+		bytes, err = json.Marshal(amount_record)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new record #####")
 		}
@@ -986,9 +986,8 @@ func (t *SimpleChaincode) get_receivable(stub *shim.ChaincodeStub, project_id st
 //
 func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity string) ([]byte, error) {
 	fmt.Println("Entering into get_current_amount")
-	var err		error
-	var AmountStr	string
-	var Amount	float64
+	var err			error
+	var amount_record	Amount
 
 	// Get the state from the ledger
 	amount_asbytes, err := stub.GetState(entity)
@@ -996,7 +995,6 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 		return nil, errors.New("##### OpeEx1: Failed to get state for entity: " + entity + " #####")
 	}
 
-	var amount_record Amount
 	err = json.Unmarshal(amount_asbytes, &amount_record)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(amount_asbytes) + " #####")
