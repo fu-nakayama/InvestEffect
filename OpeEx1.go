@@ -848,7 +848,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new record #####")
 		}
-		err = stub.PutState(entity, []byte(bytes))
+		err = stub.PutState("FG", []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 		}
