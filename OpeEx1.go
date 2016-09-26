@@ -235,7 +235,8 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if month < 4 {
 			year = year + 1
 		}
-		
+
+		// Add new issue_record
 		var issue_record Issue
 		issue_record = Issue {
 			ProjectId:	project_id,
@@ -253,6 +254,33 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Issue #####")
 		}
+
+		// Get current amount
+		amount_asbytes, err := stub.GetState("FG")
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Failed to get state for FG #####")
+		}
+		var amount_record Amount
+		err = json.Unmarshal(amount_asbytes, &amount_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(amount_asbytes) + " #####")
+		}
+		fmt.Printf("Invoke (issue): current_amount for FG = %f\n", amount_record.Amount)
+
+		// Add new amount to current_amount
+		amount_record.Amount = amount_record.Amount + issue_amount
+		fmt.Printf("Invoke (issue): new_amount for FG = %f\n", amount_record.Amount)
+
+		// update amount_record
+		bytes, err := json.Marshal(amount_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		}
+		err = stub.PutState("FG", []byte(bytes))
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Unable to put the state #####")
+		}
+		
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	} else if function == "project" {		// project //
@@ -602,15 +630,16 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (confirm): tb_amount = %f\n",	project_record.TBAmount)
 		fmt.Printf("Invoke (confirm): tb_confirmed = %t\n",	project_record.TBConfirmed)
 
-		if args[1] == "BK" {
+		entity := args[1]
+		if entity == "BK" {
 			project_record.BKConfirmed = true
-			fmt.Printf("Invoke (confirm): project_id: %s (BK) has been confirmed\n", project_id)
-		} else if args[1] == "SC" {
+			fmt.Printf("Invoke (confirm): project_id: %s ($s) has been confirmed\n", project_id, entity)
+		} else if entity == "SC" {
 			project_record.SCConfirmed = true
-			fmt.Printf("Invoke (confirm): project_id: %s (SC) has been confirmed\n", project_id)
-		} else if args[1] == "TB" {
+			fmt.Printf("Invoke (confirm): project_id: %s (%s) has been confirmed\n", project_id, entity)
+		} else if entity == "TB" {
 			project_record.TBConfirmed = true
-			fmt.Printf("Invoke (confirm): project_id: %s (TB) has been confirmed\n", project_id)
+			fmt.Printf("Invoke (confirm): project_id: %s (%s) has been confirmed\n", project_id, entity)
 		} else {
 			return nil, errors.New("##### OpeEx1: Expecting entity name to be confirmed #####")
 		}
@@ -630,6 +659,57 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		err = stub.PutState(project_key, []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state for Project #####")
+		}
+
+		// Get current amount for the entity
+		amount_asbytes, err := stub.GetState(entity)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Failed to get state for " + entity + " #####")
+		}
+		var amount_record Amount
+		err = json.Unmarshal(amount_asbytes, &amount_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(amount_asbytes) + " #####")
+		}
+		fmt.Printf("Invoke (confirm): current_amount for %s = %f\n", entity, amount_record.Amount)
+
+		// Add new amount to current_amount
+		amount_record.Amount = amount_record.Amount + project_record.InvestAmount
+		fmt.Printf("Invoke (confirm): new_amount for %s = %f\n", entity, amount_record.Amount)
+
+		// update amount_record
+		bytes, err := json.Marshal(amount_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		}
+		err = stub.PutState(entity, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Unable to put the state #####")
+		}
+
+		// Get current amount for "FG"
+		amount_asbytes, err = stub.GetState("FG")
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Failed to get state for FG #####")
+		}
+		err = json.Unmarshal(amount_asbytes, &amount_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error unmarshalling data for FG " + string(amount_asbytes) + " #####")
+		}
+		fmt.Printf("Invoke (confirm): current_amount for FG = %f\n", amount_record.Amount)
+
+		// Substruct amount from current_amount
+		amount_record.Amount = amount_record.Amount - project_record.InvestAmount
+		fmt.Printf("Invoke (confirm): new_amount for FG = %f\n", entity, amount_record.Amount)
+
+		// update amount_record
+		bytes, err := json.Marshal(amount_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		}
+		err = stub.PutState(entity, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 		}
 
 		fmt.Println("Returning from Invoke: " + function)
@@ -911,24 +991,25 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 	var Amount	float64
 
 	// Get the state from the ledger
-	AmountBytes, err := stub.GetState(entity)
+	amount_asbytes, err := stub.GetState(entity)
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Failed to get state for entity: " + entity + " #####")
 	}
 
-	// Bytes to String
-	AmountStr = string(AmountBytes)
-
-	// String to Float64
-	Amount, err = strconv.ParseFloat(AmountStr, 64)
+	var amount_record Amount
+	err = json.Unmarshal(amount_asbytes, &amount_record)
 	if err != nil {
-		return nil, errors.New("##### OpeEx1: Expecting float value for Amount to be issued #####")
+		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(amount_asbytes) + " #####")
 	}
 	fmt.Printf("Query (get_current_amount): entity = %s\n",	entity)
-	fmt.Printf("Query (get_current_amount): amount = %f\n",	Amount)
+	fmt.Printf("Query (get_current_amount): amount = %f\n",	amount_record.Amount)
 
+	bytes, err := json.Marshal(amount_record)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
+	}
 	fmt.Println("Returning from get_current_amount")
-	return []byte(AmountStr), nil
+	return []byte(bytes), nil
 }
 
 //
