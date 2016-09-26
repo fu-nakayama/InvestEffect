@@ -674,7 +674,13 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (confirm): current_amount for %s = %f\n", entity, amount_record.Amount)
 
 		// Add new amount to current_amount
-		amount_record.Amount = amount_record.Amount + project_record.InvestAmount
+		if entity == "BK" {
+			amount_record.Amount = amount_record.Amount + project_record.BKAmount
+		} else if entity == "SC" {
+			amount_record.Amount = amount_record.Amount + project_record.SCAmount
+		} else if entity == "TB" {
+			amount_record.Amount = amount_record.Amount + project_record.TBAmount
+		}
 		fmt.Printf("Invoke (confirm): new_amount for %s = %f\n", entity, amount_record.Amount)
 
 		// update amount_record
@@ -699,7 +705,13 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (confirm): current_amount for FG = %f\n", amount_record.Amount)
 
 		// Substruct amount from current_amount
-		amount_record.Amount = amount_record.Amount - project_record.InvestAmount
+		if entity == "BK" {
+			amount_record.Amount = amount_record.Amount - project_record.BKAmount
+		} else if entity == "SC" {
+			amount_record.Amount = amount_record.Amount - project_record.SCAmount
+		} else if entity == "TB" {
+			amount_record.Amount = amount_record.Amount - project_record.TBAmount
+		}
 		fmt.Printf("Invoke (confirm): new_amount for FG = %f\n", entity, amount_record.Amount)
 
 		// update amount_record
