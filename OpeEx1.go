@@ -707,7 +707,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
-	} else if function == "confirm" {		// project //
+	} else if function == "confirm" {		// confirm //
 		// (ProjectId, Entity)
 		fmt.Println("Entering into confirm")
 		if len(args) != 2 {
