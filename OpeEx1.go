@@ -116,7 +116,7 @@ type ReceivableSet struct{
 // Init
 //
 func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	fmt.Println("Entering into Init()")
+	fmt.Println("Entering into Init()" + function)
 
 	var amount_record Amount
 
