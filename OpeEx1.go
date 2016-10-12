@@ -882,12 +882,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Expecting uint value for Rank #####")
 		}
-		year_str := strconv.FormatUint(Year, 10)
-		ranking_key := "ranking/" + year_str + "/" + Person
-		fmt.Printf("Invoke (ranking): year = %d\n", Year)
-		fmt.Printf("Invoke (ranking): rank = %d\n", Rank)
-		fmt.Printf("Invoke (ranking): rank = %s\n", Person)
-		fmt.Printf("Invoke (ranking): url = %s\n", URL)
+		year_str := strconv.FormatUint(ranking_record.Year, 10)
+		ranking_key := "ranking/" + year_str + "/" + ranking_record.Person
+		fmt.Printf("Invoke (ranking): year = %d\n", ranking_record.Year)
+		fmt.Printf("Invoke (ranking): rank = %d\n", ranking_record.Rank)
+		fmt.Printf("Invoke (ranking): rank = %s\n", ranking_record.Person)
+		fmt.Printf("Invoke (ranking): url = %s\n", ranking_record.URL)
 
 		// update amount_record
 		bytes, err = json.Marshal(ranking_record)
