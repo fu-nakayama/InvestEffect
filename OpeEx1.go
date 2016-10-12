@@ -884,10 +884,10 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		}
 		year_str := strconv.FormatUint(ranking_record.Year, 10)
 		ranking_key := "ranking/" + year_str + "/" + ranking_record.Person
-		fmt.Printf("Invoke (ranking): year = %d\n", ranking_record.Year)
-		fmt.Printf("Invoke (ranking): rank = %d\n", ranking_record.Rank)
-		fmt.Printf("Invoke (ranking): rank = %s\n", ranking_record.Person)
-		fmt.Printf("Invoke (ranking): url = %s\n", ranking_record.URL)
+		fmt.Printf("Invoke (ranking): Year = %d\n",	ranking_record.Year)
+		fmt.Printf("Invoke (ranking): Rank = %d\n",	ranking_record.Rank)
+		fmt.Printf("Invoke (ranking): Person = %s\n",	ranking_record.Person)
+		fmt.Printf("Invoke (ranking): URL = %s\n",	ranking_record.URL)
 
 		// update amount_record
 		bytes, err := json.Marshal(ranking_record)
@@ -1230,10 +1230,10 @@ func (t *SimpleChaincode) get_ranking(stub *shim.ChaincodeStub, ranking_year uin
 	if err != nil {
 		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(ranking_asbytes) + " #####")
 	}
-	fmt.Printf("Query (get_ranking): year = %d\n", ranking_record.Year)
-	fmt.Printf("Query (get_ranking): rank = %d\n", ranking_record.Rank)
-	fmt.Printf("Query (get_ranking): rank = %s\n", ranking_record.Person)
-	fmt.Printf("Query (get_ranking): url = %s\n", ranking_record.URL)	
+	fmt.Printf("Query (get_ranking): Year = %d\n",		ranking_record.Year)
+	fmt.Printf("Query (get_ranking): Rank = %d\n",		ranking_record.Rank)
+	fmt.Printf("Query (get_ranking): Person = %s\n",	ranking_record.Person)
+	fmt.Printf("Query (get_ranking): URL = %s\n",		ranking_record.URL)	
 
 	bytes, err := json.Marshal(ranking_record)
 	if err != nil {
