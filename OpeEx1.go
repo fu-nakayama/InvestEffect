@@ -68,6 +68,7 @@ type Receivable struct {
 	CICAmount	float64	`json:"cic_amount"`
 }
 
+// Record of project
 type Project struct {
 	ProjectId	string	`json:"project_id"`	// {project_id} + "project"
 	ProjectName	string	`json:"project_name"`
@@ -94,6 +95,14 @@ type Project struct {
 	TBPerson	string	`json:"tb_person"`
 	TBAmount	float64	`json:"tb_amount"`
 	TBConfirmed	bool	`json:"tb_confirmed"`	// Yes: true, No: false
+}
+
+// Record of ranking
+type Ranking struct{
+	Person		string	`json:"person"`
+	Year		uint16	`json:"year"`		// Fiscal Year
+	Rank		int16	`json:"rank"`
+	URL		string	`json:"url"`
 }
 
 type ProjectSet struct{
@@ -127,7 +136,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err := json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 	}
 	err = stub.PutState("FG", []byte(bytes))
 	if err != nil {
@@ -140,7 +149,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err = json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 	}
 	err = stub.PutState("BK", []byte(bytes))
 	if err != nil {
@@ -153,7 +162,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err = json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 	}
 	err = stub.PutState("SC", []byte(bytes))
 	if err != nil {
@@ -166,7 +175,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	bytes, err = json.Marshal(amount_record)
 	if err != nil {
-		return nil, errors.New("##### OpeEx1: Error creating new record #####")
+		return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 	}
 	err = stub.PutState("TB", []byte(bytes))
 	if err != nil {
@@ -190,7 +199,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	}
 	fmt.Println("Invoke function called by : " + user)
 	
-	if function == "issue" {			// issue //
+	if function == "issue" {			// issue //0
 		// (ProjectId, Issueamount)
 		fmt.Println("Entering into issue")
 		if len(args) != 2 {
@@ -274,7 +283,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// update amount_record
 		bytes, err = json.Marshal(amount_record)
 		if err != nil {
-			return nil, errors.New("##### OpeEx1: Error creating new record #####")
+			return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 		}
 		err = stub.PutState("FG", []byte(bytes))
 		if err != nil {
@@ -815,7 +824,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// update amount_record
 		bytes, err = json.Marshal(amount_record)
 		if err != nil {
-			return nil, errors.New("##### OpeEx1: Error creating new record #####")
+			return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 		}
 		err = stub.PutState(entity, []byte(bytes))
 		if err != nil {
@@ -846,13 +855,50 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// update amount_record
 		bytes, err = json.Marshal(amount_record)
 		if err != nil {
-			return nil, errors.New("##### OpeEx1: Error creating new record #####")
+			return nil, errors.New("##### OpeEx1: Error creating new Amount record #####")
 		}
 		err = stub.PutState("FG", []byte(bytes))
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 		}
 
+		fmt.Println("Returning from Invoke: " + function)
+		return nil, nil
+	} else if function == "ranking" {		// ranking //
+		// (Year, Person, Rank, URL)
+		fmt.Println("Entering into ranking")
+		if len(args) != 4 {
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 4 arguments for ranking #####")
+		}
+
+		var ranking_record Ranking
+		ranking_record.Year, err = strconv.ParseUint(args[0], 10, 16)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Expecting uint value for Year #####")
+		}
+		ranking_record.Person =	args[1]
+		ranking_record.URL =	args[3]
+		ranking_record.Rank, err = strconv.ParseUint(args[2], 10, 16)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Expecting uint value for Rank #####")
+		}
+		year_str := strconv.FormatUint(Year, 10)
+		ranking_key := "ranking/" + year_str + "/" + Person
+		fmt.Printf("Invoke (ranking): year = %d\n", Year)
+		fmt.Printf("Invoke (ranking): rank = %d\n", Rank)
+		fmt.Printf("Invoke (ranking): rank = %s\n", Person)
+		fmt.Printf("Invoke (ranking): url = %s\n", URL)
+
+		// update amount_record
+		bytes, err = json.Marshal(ranking_record)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Error creating new Ranking record #####")
+		}
+		err = stub.PutState(ranking_key, []byte(bytes))
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Unable to put the state #####")
+		}		
+		
 		fmt.Println("Returning from Invoke: " + function)
 		return nil, nil
 	}
@@ -913,6 +959,20 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 		project_id := args[0]
 		fmt.Println("Executing Query: " + function)
 		return t.get_receivable(stub, project_id)
+	} else if function == "get_ranking" {
+		if len(args) != 2 {
+			fmt.Printf("Incorrect number of arguments passed");
+			return nil, errors.New("##### OpeEx1: Query: Incorrect number of arguments passed #####")
+		}
+
+		ranking_year, err := strconv.ParseUint(args[0], 10, 16)
+		if err != nil {
+			return nil, errors.New("##### OpeEx1: Expecting uint value for Year #####")
+		}
+		ranking_person := args[1]
+
+		fmt.Println("Executing Query: " + function)
+		return t.get_ranking(stub, ranking_year, ranking_person)
 	} else if function == "get_all_project" {
 		fmt.Println("Executing Query: " + function)
 		return t.get_all_project(stub)
@@ -1148,6 +1208,38 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 		return nil, errors.New("##### OpeEx1: Error creating returning record #####")
 	}
 	fmt.Println("Returning from get_current_amount")
+	return []byte(bytes), nil
+}
+
+//
+// get_ranking
+//
+func (t *SimpleChaincode) get_ranking(stub *shim.ChaincodeStub, ranking_year uint16, ranking_person string) ([]byte, error) {
+	fmt.Println("Entering into get_ranking")
+	var err			error
+	var ranking_record	Ranking
+	
+	// Get the state from the ledger
+	year_str := strconv.FormatUint(ranking_year, 10)
+	ranking_key := "ranking/" + year_str + "/" + ranking_person
+	ranking_asbytes, err := stub.GetState(ranking_key)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Failed to get state for ranking_key: " + ranking_key + " #####")
+	}
+	err = json.Unmarshal(ranking_asbytes, &ranking_record)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error unmarshalling data " + string(ranking_asbytes) + " #####")
+	}
+	fmt.Printf("Query (get_ranking): year = %d\n", ranking_record.Year)
+	fmt.Printf("Query (get_ranking): rank = %d\n", ranking_record.Rank)
+	fmt.Printf("Query (get_ranking): rank = %s\n", ranking_record.Person)
+	fmt.Printf("Query (get_ranking): url = %s\n", ranking_record.URL)	
+
+	bytes, err := json.Marshal(ranking_record)
+	if err != nil {
+		return nil, errors.New("##### OpeEx1: Error creating returning Ranking record #####")
+	}
+	fmt.Println("Returning from get_ranking")
 	return []byte(bytes), nil
 }
 
