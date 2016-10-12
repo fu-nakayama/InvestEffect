@@ -166,7 +166,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 	err = stub.PutState("SC", []byte(bytes))
 	if err != nil {
-		return nil, errors.New("##### OpeEx1:  Unable to put the state #####")
+		return nil, errors.New("##### OpeEx1: Unable to put the state #####")
 	}
 
 	amount_record = Amount {
@@ -203,7 +203,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		// (ProjectId, Issueamount)
 		fmt.Println("Entering into issue")
 		if len(args) != 2 {
-			return nil, errors.New("##### OpeEx1:  Incorrect number of arguments. Expecting 2 arguments for issue #####")
+			return nil, errors.New("##### OpeEx1: Incorrect number of arguments. Expecting 2 arguments for issue #####")
 		}
 
 		// String to Float64
