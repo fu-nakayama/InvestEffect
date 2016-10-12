@@ -1214,7 +1214,7 @@ func (t *SimpleChaincode) get_current_amount(stub *shim.ChaincodeStub, entity st
 //
 // get_ranking
 //
-func (t *SimpleChaincode) get_ranking(stub *shim.ChaincodeStub, ranking_year uint16, ranking_person string) ([]byte, error) {
+func (t *SimpleChaincode) get_ranking(stub *shim.ChaincodeStub, ranking_year uint64, ranking_person string) ([]byte, error) {
 	fmt.Println("Entering into get_ranking")
 	var err			error
 	var ranking_record	Ranking
