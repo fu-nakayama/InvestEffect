@@ -890,7 +890,7 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 		fmt.Printf("Invoke (ranking): url = %s\n", ranking_record.URL)
 
 		// update amount_record
-		bytes, err = json.Marshal(ranking_record)
+		bytes, err := json.Marshal(ranking_record)
 		if err != nil {
 			return nil, errors.New("##### OpeEx1: Error creating new Ranking record #####")
 		}
