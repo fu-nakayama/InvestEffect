@@ -100,8 +100,8 @@ type Project struct {
 // Record of ranking
 type Ranking struct{
 	Person		string	`json:"person"`
-	Year		uint16	`json:"year"`		// Fiscal Year
-	Rank		int16	`json:"rank"`
+	Year		uint64	`json:"year"`		// Fiscal Year
+	Rank		uint64	`json:"rank"`
 	URL		string	`json:"url"`
 }
 
